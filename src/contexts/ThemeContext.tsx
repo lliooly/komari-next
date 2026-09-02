@@ -58,6 +58,7 @@ export type GuestDisplaySettings = {
 };
 
 export interface ManagedThemeSettings extends Partial<ThemeConfig> {
+  logoUrl?: string;
   statusCardsVisibility?: Partial<StatusCardsVisibility>;
   guestDisplay?: Partial<GuestDisplaySettings>;
   nodeViewMode?: NodeViewMode;
@@ -561,6 +562,7 @@ function normalizeGuestDisplaySettings(input: unknown): Partial<GuestDisplaySett
 function normalizeManagedThemeSettings(input: unknown): ManagedThemeSettings {
   const source = parseThemeSettings(input);
   const result: ManagedThemeSettings = normalizeThemeConfigOverrides(source);
+  const logoUrl = pickString(readDottedValue(source, "logoUrl"));
   const nodeViewMode = pickEnum(readDottedValue(source, "nodeViewMode"), NODE_VIEW_MODES);
   const appearance = pickAppearance(readDottedValue(source, "appearance"));
   const language = pickManagedLanguage(readDottedValue(source, "language"));
@@ -588,6 +590,10 @@ function normalizeManagedThemeSettings(input: unknown): ManagedThemeSettings {
 
   if (Object.keys(guestDisplay).length > 0) {
     result.guestDisplay = guestDisplay;
+  }
+
+  if (logoUrl !== undefined) {
+    result.logoUrl = logoUrl.trim();
   }
 
   if (nodeViewMode) {
@@ -698,6 +704,7 @@ function mergeManagedSettings(
       "cardBlurType",
       "cardBlurIntensity",
       "cardExtraBlurIntensity",
+      "logoUrl",
       "appearance",
       "language",
     ] as const

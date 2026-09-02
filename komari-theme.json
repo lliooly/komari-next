@@ -12,6 +12,12 @@
         "description": "Komari Next theme defaults",
         "managedFields": [
             {
+                "key": "logoUrl",
+                "type": "text",
+                "label": "Logo image URL",
+                "default": ""
+            },
+            {
                 "key": "colorTheme",
                 "type": "option",
                 "label": "Default color theme",
@@ -224,6 +230,21 @@
             {
                 "type": "title",
                 "name": "Theme Settings"
+            },
+            {
+                "key": "logoUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Logo 图片链接",
+                    "zh-TW": "Logo 圖片連結",
+                    "en-US": "Logo Image URL"
+                },
+                "help": {
+                    "zh-CN": "设置导航栏显示的 Logo 图片链接，留空使用默认 K。",
+                    "zh-TW": "設定導覽列顯示的 Logo 圖片連結，留空使用預設 K。",
+                    "en-US": "Set the Logo image URL shown in the navigation bar. Leave blank to use the default K."
+                },
+                "default": ""
             },
             {
                 "key": "colorTheme",
@@ -513,6 +534,21 @@
                 "name": "Theme Settings"
             },
             {
+                "key": "logoUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Logo 图片链接",
+                    "zh-TW": "Logo 圖片連結",
+                    "en-US": "Logo Image URL"
+                },
+                "help": {
+                    "zh-CN": "设置导航栏显示的 Logo 图片链接，留空使用默认 K。",
+                    "zh-TW": "設定導覽列顯示的 Logo 圖片連結，留空使用預設 K。",
+                    "en-US": "Set the Logo image URL shown in the navigation bar. Leave blank to use the default K."
+                },
+                "default": ""
+            },
+            {
                 "key": "colorTheme",
                 "type": "select",
                 "name": {
@@ -794,6 +830,21 @@
             {
                 "type": "title",
                 "name": "Theme Settings"
+            },
+            {
+                "key": "logoUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Logo 图片链接",
+                    "zh-TW": "Logo 圖片連結",
+                    "en-US": "Logo Image URL"
+                },
+                "help": {
+                    "zh-CN": "设置导航栏显示的 Logo 图片链接，留空使用默认 K。",
+                    "zh-TW": "設定導覽列顯示的 Logo 圖片連結，留空使用預設 K。",
+                    "en-US": "Set the Logo image URL shown in the navigation bar. Leave blank to use the default K."
+                },
+                "default": ""
             },
             {
                 "key": "colorTheme",
@@ -1081,6 +1132,21 @@
             {
                 "type": "title",
                 "name": "Theme Settings"
+            },
+            {
+                "key": "logoUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Logo 图片链接",
+                    "zh-TW": "Logo 圖片連結",
+                    "en-US": "Logo Image URL"
+                },
+                "help": {
+                    "zh-CN": "设置导航栏显示的 Logo 图片链接，留空使用默认 K。",
+                    "zh-TW": "設定導覽列顯示的 Logo 圖片連結，留空使用預設 K。",
+                    "en-US": "Set the Logo image URL shown in the navigation bar. Leave blank to use the default K."
+                },
+                "default": ""
             },
             {
                 "key": "colorTheme",
