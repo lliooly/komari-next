@@ -95,7 +95,7 @@ const PriceTags = ({
                 compact && "text-[10px] leading-none"
               )}
             >
-              <div className="border-2 rounded-4xl border-green-500"></div>
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
               V4
             </label>
           </Badge>
@@ -109,7 +109,7 @@ const PriceTags = ({
                 compact && "text-[10px] leading-none"
               )}
             >
-              <div className="border-2 rounded-4xl border-green-500"></div>
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
               V6
             </label>
           </Badge>
@@ -130,7 +130,7 @@ const PriceTags = ({
               compact && "text-[10px] leading-none"
             )}
           >
-            <div className="border-2 rounded-4xl border-green-500"></div>
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
             V4
           </label>
         </Badge>
@@ -144,7 +144,7 @@ const PriceTags = ({
               compact && "text-[10px] leading-none"
             )}
           >
-            <div className="border-2 rounded-4xl border-green-500"></div>
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
             V6
           </label>
         </Badge>
@@ -293,7 +293,7 @@ const CustomTags = ({
       {hiddenCount > 0 && (
         <Badge
           variant="outline"
-          className="h-5 shrink-0 border-muted-foreground/25 bg-muted/50 px-1.5 py-0 text-[10px] leading-none text-muted-foreground"
+          className="h-5 shrink-0 bg-muted/50 px-1.5 py-0 text-[10px] leading-none text-muted-foreground"
           title={hiddenTitle}
         >
           <label className="text-[10px] leading-none">+{hiddenCount}</label>

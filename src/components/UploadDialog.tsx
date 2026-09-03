@@ -100,7 +100,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
             direction="column"
             align="center"
             justify="center"
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+            className="rounded-lg bg-muted/30 p-8 text-center cursor-pointer transition-colors hover:bg-muted/45"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onClick={() => inputRef.current?.click()}

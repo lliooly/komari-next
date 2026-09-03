@@ -45,11 +45,8 @@ export function SettingCard({
       justify="between"
       align="center"
       wrap="wrap"
-      style={{ borderColor: "var(--gray-a5)" }}
       className={
-        bordless
-          ? "border-0"
-          : "border-1 rounded-md py-2 px-4 bg-transparent  min-h-8" + className
+        bordless ? className : `rounded-md py-2 px-4 bg-transparent min-h-8 ${className}`
       }
     >
       <Flex
@@ -647,7 +644,7 @@ export function SettingCardCollapse({
             style={{ overflow: "hidden" }} // Prevents content clipping during animation
             id="collapsible-content"
           >
-            <div className="border-t-1 my-2" />
+            <div className="my-2" />
             {children}
           </motion.div>
         )}

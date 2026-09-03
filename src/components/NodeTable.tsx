@@ -169,7 +169,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
   const tableColumnCount = showBillingColumn ? 10 : 9;
 
   return (
-    <div data-card-blur-surface="true" className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+    <div data-card-blur-surface="true" className="rounded-xl bg-card text-card-foreground shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <Table className={cn("w-full table-fixed", showBillingColumn ? "min-w-[1240px]" : "min-w-[1084px]")}>
           <TableHeader>
@@ -306,7 +306,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                   className={cn(
                     "cursor-pointer hover:bg-muted/50 transition-colors",
                     !isOnline && "opacity-60",
-                    isExpanded && "bg-muted/50 border-b-0"
+                    isExpanded && "bg-muted/50"
                   )}
                   onClick={() => toggleRowExpansion(node.uuid)}
                 >
@@ -354,10 +354,10 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                       <Badge
                         variant="outline"
                         className={cn(
-                          "font-normal text-xs px-2 py-0.5 border h-6",
+                          "font-normal text-xs px-2 py-0.5 h-6",
                           isOnline
-                            ? "border-green-500/30 text-green-600 bg-green-500/10 dark:text-green-400 dark:bg-green-500/20"
-                            : "border-red-500/30 text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20"
+                            ? "text-green-600 bg-green-500/10 dark:text-green-400 dark:bg-green-500/20"
+                            : "text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20"
                         )}
                       >
                          <span className={cn("w-1.5 h-1.5 rounded-full mr-1.5", isOnline ? "bg-green-500 animate-pulse" : "bg-red-500")} />
@@ -492,10 +492,10 @@ interface ExpandedNodeDetailsProps {
 const ExpandedNodeDetails: React.FC<ExpandedNodeDetailsProps> = ({ node }) => {
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col gap-6 overflow-hidden">
-      <div data-card-blur-surface="true" className="min-w-0 max-w-full overflow-hidden rounded-lg border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
+      <div data-card-blur-surface="true" className="min-w-0 max-w-full overflow-hidden rounded-lg bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
         <DetailsGrid uuid={node.uuid} />
       </div>
-      <div data-card-blur-surface="true" className="min-w-0 max-w-full overflow-hidden rounded-lg border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
+      <div data-card-blur-surface="true" className="min-w-0 max-w-full overflow-hidden rounded-lg bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
         <MiniPingChart hours={24} uuid={node.uuid} />
       </div>
     </div>

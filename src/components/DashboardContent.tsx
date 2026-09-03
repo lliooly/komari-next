@@ -334,7 +334,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Classic layout: Traditional card with icon on right
   if (layout === 'classic') {
     return (
-      <Card className="overflow-hidden border shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
+      <Card className="overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
         {/* Mobile: single line layout */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -373,7 +373,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Modern layout: Horizontal with icon on left
   if (layout === 'modern') {
     return (
-      <Card className="h-full overflow-hidden border-none shadow-sm bg-gradient-to-br from-card to-card/50 hover:shadow-md transition-all duration-200">
+      <Card className="h-full overflow-hidden shadow-sm bg-gradient-to-br from-card to-card/50 hover:shadow-md transition-all duration-200">
         {/* Mobile: compact single line */}
         <CardContent className="p-3 md:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -391,7 +391,7 @@ const TopCard: React.FC<TopCardProps> = ({
         {/* Desktop: original layout */}
         <CardContent className="p-0 h-full hidden md:block">
           <div className="flex h-full">
-            <div className="w-12 bg-primary/10 flex flex-col items-center justify-center gap-2 border-r border-primary/20">
+            <div className="w-12 bg-primary/10 flex flex-col items-center justify-center gap-2">
               <div className="text-primary">
                 {icon}
               </div>
@@ -416,7 +416,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Minimal layout: Borderless, clean design
   if (layout === 'minimal') {
     return (
-      <div data-card-blur-surface="true" className="relative rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/50 hover:to-muted/30 transition-all duration-200 backdrop-blur-sm border border-border/50">
+      <div data-card-blur-surface="true" className="relative rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/50 hover:to-muted/30 transition-all duration-200 backdrop-blur-sm">
         {/* Mobile: compact single line */}
         <div className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -455,7 +455,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Detailed layout: Icon on top, centered
   if (layout === 'detailed') {
     return (
-      <Card className="overflow-hidden border-2 shadow-md bg-card hover:shadow-xl hover:border-primary/30 transition-all duration-200">
+      <Card className="overflow-hidden shadow-md bg-card hover:shadow-xl transition-all duration-200">
         {/* Mobile: compact single line */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -472,8 +472,8 @@ const TopCard: React.FC<TopCardProps> = ({
         </CardContent>
         {/* Desktop: original layout */}
         <CardContent className="p-0 hidden sm:block">
-          <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 p-3 pb-2 text-center border-b">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-background shadow-lg mb-2 border-2 border-primary/20">
+          <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 p-3 pb-2 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-background shadow-lg mb-2">
               <div className="text-primary scale-110">
                 {icon}
               </div>
@@ -498,7 +498,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Compact layout: Same visual as classic, fully independent
   if (layout === 'compact') {
     return (
-      <Card className="overflow-hidden border shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
+      <Card className="overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
         {/* Mobile: single line layout */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">

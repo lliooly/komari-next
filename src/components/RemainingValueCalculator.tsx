@@ -117,7 +117,7 @@ function ActiveNodeCard({
   t: TranslateFn;
 }) {
   return (
-    <article className="rounded-2xl border border-border/60 bg-muted/35 p-4 shadow-sm shadow-black/5">
+    <article data-card-blur-surface="true" className="rounded-lg bg-muted/35 p-4 shadow-sm shadow-black/5">
       <div className="flex items-center justify-between gap-3">
         <div className="font-medium">{item.name}</div>
         <div className="text-sm font-semibold">
@@ -149,7 +149,7 @@ function ActiveNodeCard({
 
 function SkippedNodeCard({ item, t }: { item: SkippedRemainingValueNode; t: TranslateFn }) {
   return (
-    <article className="rounded-2xl border border-dashed border-border/60 bg-muted/30 p-4 shadow-sm shadow-black/5">
+    <article data-card-blur-surface="true" className="rounded-lg bg-muted/30 p-4 shadow-sm shadow-black/5">
       <div className="font-medium">{item.name}</div>
       <div className="mt-2 text-sm text-muted-foreground">
         {t("remainingValue.card.skipReason", { defaultValue: "Skipped because" })}
@@ -161,7 +161,7 @@ function SkippedNodeCard({ item, t }: { item: SkippedRemainingValueNode; t: Tran
 
 function ExpiredNodeCard({ item, t }: { item: RemainingValueNode; t: TranslateFn }) {
   return (
-    <article className="rounded-2xl border border-dashed border-border/60 bg-muted/30 p-4 shadow-sm shadow-black/5">
+    <article data-card-blur-surface="true" className="rounded-lg bg-muted/30 p-4 shadow-sm shadow-black/5">
       <div className="font-medium">{item.name}</div>
       <div className="mt-2 text-sm text-muted-foreground">
         {t("remainingValue.card.originalPrice", {
@@ -185,7 +185,7 @@ function SummaryMetricCard({
   value: string;
 }) {
   return (
-    <article className="rounded-2xl border border-border/60 bg-muted/55 p-4 shadow-inner shadow-black/5">
+    <article data-card-blur-surface="true" className="rounded-lg bg-muted/55 p-4 shadow-inner shadow-black/5">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-bold tracking-tight">{value}</div>
     </article>
@@ -433,7 +433,7 @@ export default function RemainingValueCalculator() {
 
     if (sections.length === 0) {
       return (
-        <section className="rounded-2xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
+        <section className="rounded-lg bg-muted/25 p-4 text-sm text-muted-foreground">
           {t("remainingValue.empty.none", { defaultValue: "There are no nodes to display right now" })}
         </section>
       );
@@ -450,7 +450,7 @@ export default function RemainingValueCalculator() {
     if (detailFilter === "active") {
       if (convertedActive.length === 0) {
         return (
-          <section className="rounded-2xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
+          <section className="rounded-lg bg-muted/25 p-4 text-sm text-muted-foreground">
             {t("remainingValue.empty.active", { defaultValue: "There are no included nodes right now" })}
           </section>
         );
@@ -468,7 +468,7 @@ export default function RemainingValueCalculator() {
     if (detailFilter === "skipped") {
       if (snapshot.skipped.length === 0) {
         return (
-          <section className="rounded-2xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
+          <section className="rounded-lg bg-muted/25 p-4 text-sm text-muted-foreground">
             {t("remainingValue.empty.skipped", { defaultValue: "There are no skipped nodes right now" })}
           </section>
         );
@@ -485,7 +485,7 @@ export default function RemainingValueCalculator() {
 
     if (snapshot.expired.length === 0) {
       return (
-        <section className="rounded-2xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
+        <section className="rounded-lg bg-muted/25 p-4 text-sm text-muted-foreground">
           {t("remainingValue.empty.expired", { defaultValue: "There are no expired nodes right now" })}
         </section>
       );
@@ -512,9 +512,10 @@ export default function RemainingValueCalculator() {
   const panelBody = (
     <div
       data-testid="remaining-value-panel"
-      className="flex max-h-[min(85vh,48rem)] flex-col overflow-hidden rounded-3xl border border-border/80 bg-card/95 ring-1 ring-white/10 shadow-[0_20px_44px_rgba(15,23,42,0.18)] dark:ring-white/12 dark:shadow-[0_20px_44px_rgba(0,0,0,0.42)]"
+      data-card-blur-surface="true"
+      className="flex max-h-[min(85vh,48rem)] flex-col overflow-hidden rounded-lg bg-card/95 shadow-[0_20px_44px_rgba(15,23,42,0.18)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.42)]"
     >
-      <div className="space-y-4 border-b border-border/70 px-5 py-4">
+      <div className="space-y-4 px-5 py-4">
         <div className="text-base font-semibold">{titleText}</div>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -547,7 +548,7 @@ export default function RemainingValueCalculator() {
           onValueChange={(value) => setDisplayCurrency(value as DisplayCurrency)}
           className="max-w-full"
         >
-          <TabsList className="h-10 w-fit max-w-full justify-start rounded-xl border bg-muted/45 p-1">
+          <TabsList className="h-10 w-fit max-w-full justify-start rounded-lg bg-muted/45 p-1">
             {DISPLAY_CURRENCIES.map((currency) => (
               <TabsTrigger key={currency} value={currency} className="min-w-16 rounded-lg px-4">
                 {currency}
@@ -578,9 +579,9 @@ export default function RemainingValueCalculator() {
           onValueChange={(value) => setDetailFilter(value as DetailFilter)}
           className="max-w-full"
         >
-          <TabsList className="h-auto w-fit max-w-full flex-wrap justify-start gap-2 rounded-2xl border bg-muted/40 p-2">
+          <TabsList className="h-auto w-fit max-w-full flex-wrap justify-start gap-2 rounded-lg bg-muted/40 p-2">
             {filterOptions.map((option) => (
-              <TabsTrigger key={option.value} value={option.value} className="rounded-xl px-4 py-2">
+              <TabsTrigger key={option.value} value={option.value} className="rounded-lg px-4 py-2">
                 {option.label}
               </TabsTrigger>
             ))}
@@ -608,7 +609,7 @@ export default function RemainingValueCalculator() {
         </Drawer>
       ) : (
         <Dialog open={open} onOpenChange={(nextOpen) => void handleOpenChange(nextOpen)}>
-          <DialogContent className="max-h-[85vh] max-w-3xl overflow-hidden border-none p-0 shadow-2xl">
+          <DialogContent className="max-h-[85vh] max-w-3xl overflow-hidden p-0 shadow-2xl">
             <DialogTitle className="sr-only">{titleText}</DialogTitle>
             <DialogDescription className="sr-only">{descriptionText}</DialogDescription>
             {panelBody}

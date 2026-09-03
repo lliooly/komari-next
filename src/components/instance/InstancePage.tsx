@@ -81,7 +81,7 @@ export default function InstancePage({ uuid }: InstancePageProps) {
                {node?.name ?? uuid}
              </h1>
           </div>
-          <div className="bg-muted px-2 py-1 rounded text-xs font-mono text-muted-foreground">
+          <div className="bg-muted px-2 py-1 rounded-lg text-xs font-mono text-muted-foreground">
              {node?.uuid}
           </div>
         </CardHeader>

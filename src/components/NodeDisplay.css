@@ -47,7 +47,6 @@
 /* 展开行的样式 */
 .expanded-row {
   background-color: var(--accent-1) !important;
-  border-top: 1px solid var(--accent-4);
 }
 
 .expanded-row:hover {
@@ -120,7 +119,7 @@
 .details-section {
   padding: 1rem;
   background: var(--accent-2);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
 }
 
 /* Ping 图表占位符 */

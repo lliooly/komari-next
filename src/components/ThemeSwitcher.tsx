@@ -238,7 +238,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Layout className="h-4 w-4" />
               {t('themeCustomizer.cardLayout', { defaultValue: 'Card Layout' })}
@@ -250,8 +250,8 @@ const ThemeSwitcher = () => {
                   onClick={() => setCardLayout(layout.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.cardLayout === layout.value
-                      ? 'bg-primary/10 border border-primary'
-                      : 'border border-transparent hover:bg-accent'
+                      ? 'bg-primary/10'
+                      : 'hover:bg-accent'
                   }`}
                 >
                   <div className="flex-1">
@@ -266,7 +266,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Activity className="h-4 w-4" />
               {t('themeCustomizer.cardDesign', { defaultValue: 'Card Design' })}
@@ -278,8 +278,8 @@ const ThemeSwitcher = () => {
                   onClick={() => setCardDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.cardDesign === design.value
-                      ? 'bg-primary/10 border border-primary'
-                      : 'border border-transparent hover:bg-accent'
+                      ? 'bg-primary/10'
+                      : 'hover:bg-accent'
                   }`}
                 >
                   <div className="flex-1">
@@ -294,7 +294,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Layout className="h-4 w-4" />
               {t('themeCustomizer.cardBackground', { defaultValue: 'Card Background' })}
@@ -321,10 +321,10 @@ const ThemeSwitcher = () => {
                           key={type.value}
                           type="button"
                           onClick={() => setCardBlurType(type.value)}
-                          className={`rounded-md border p-2 text-left transition-all ${
+                          className={`rounded-md p-2 text-left transition-all ${
                             themeConfig.cardBlurType === type.value
-                              ? 'border-primary bg-primary/10'
-                              : 'border-transparent hover:bg-accent'
+                              ? 'bg-primary/10'
+                              : 'hover:bg-accent'
                           }`}
                         >
                           <div className="text-[11px] font-medium leading-tight">{type.label}</div>
@@ -376,7 +376,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Settings className="h-4 w-4" />
               {t("status_settings")}
@@ -399,7 +399,7 @@ const ThemeSwitcher = () => {
           </div>
 
           {isThemeSettingsAdmin && (
-            <div className="border-t pt-3">
+            <div className="pt-3">
               <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 {t("themeCustomizer.guestDisplay.title", { defaultValue: "Guest Display" })}
@@ -425,7 +425,7 @@ const ThemeSwitcher = () => {
             </div>
           )}
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Gauge className="h-4 w-4" />
               {t('themeCustomizer.statusDesign', { defaultValue: 'Status Design' })}
@@ -437,8 +437,8 @@ const ThemeSwitcher = () => {
                   onClick={() => setStatusDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.statusDesign === design.value
-                      ? 'bg-primary/10 border border-primary'
-                      : 'border border-transparent hover:bg-accent'
+                      ? 'bg-primary/10'
+                      : 'hover:bg-accent'
                   }`}
                 >
                   <div className="flex-1">
@@ -453,7 +453,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Layout className="h-4 w-4" />
               {t("nodeDisplay.defaultView", { defaultValue: "Default View" })}
@@ -465,7 +465,7 @@ const ThemeSwitcher = () => {
                 size="sm"
                 className={cn(
                   "h-9 justify-center gap-2 text-xs",
-                  nodeViewMode === "grid" && "bg-primary/10 border-primary"
+                  nodeViewMode === "grid" && "bg-primary/10"
                 )}
                 onClick={() => setNodeViewMode("grid")}
               >
@@ -478,7 +478,7 @@ const ThemeSwitcher = () => {
                 size="sm"
                 className={cn(
                   "h-9 justify-center gap-2 text-xs",
-                  nodeViewMode === "table" && "bg-primary/10 border-primary"
+                  nodeViewMode === "table" && "bg-primary/10"
                 )}
                 onClick={() => setNodeViewMode("table")}
               >
@@ -488,7 +488,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <PieChart className="h-4 w-4" />
               {t('themeCustomizer.graphDesign', { defaultValue: 'Graph Design' })}
@@ -500,8 +500,8 @@ const ThemeSwitcher = () => {
                   onClick={() => setGraphDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.graphDesign === design.value
-                      ? 'bg-primary/10 border border-primary'
-                      : 'border border-transparent hover:bg-accent'
+                      ? 'bg-primary/10'
+                      : 'hover:bg-accent'
                   }`}
                 >
                   <div className="flex-1">
@@ -516,7 +516,7 @@ const ThemeSwitcher = () => {
             </div>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-medium text-muted-foreground">
                 {t('themeCustomizer.showRamDiskTotal', { defaultValue: 'Show Total RAM/Disk' })}
@@ -531,7 +531,7 @@ const ThemeSwitcher = () => {
             </p>
           </div>
 
-          <div className="border-t pt-3">
+          <div className="pt-3">
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <Image className="h-4 w-4" />
               {t('themeCustomizer.backgroundImage', { defaultValue: 'Background Image' })}
@@ -586,10 +586,10 @@ const ThemeSwitcher = () => {
                           key={type.value}
                           type="button"
                           onClick={() => setBackgroundBlurType(type.value)}
-                          className={`rounded-md border p-2 text-left transition-all ${
+                          className={`rounded-md p-2 text-left transition-all ${
                             themeConfig.backgroundBlurType === type.value
-                              ? 'border-primary bg-primary/10'
-                              : 'border-transparent hover:bg-accent'
+                              ? 'bg-primary/10'
+                              : 'hover:bg-accent'
                           }`}
                         >
                           <div className="text-[11px] font-medium leading-tight">{type.label}</div>

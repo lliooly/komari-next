@@ -68,7 +68,7 @@ const MiniPingChartFloat: React.FC<FloatMiniPingChartProps> = ({
         sideOffset={5}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="z-50 mx-auto w-auto max-w-[calc(100vw-1rem)] overflow-y-auto overscroll-contain rounded-lg border bg-card p-2 shadow-lg touch-pan-y"
+        className="z-50 mx-auto w-auto max-w-[calc(100vw-1rem)] overflow-y-auto overscroll-contain rounded-lg bg-card p-2 shadow-lg touch-pan-y"
         style={{
           width: responsiveWidth,
           maxHeight: "min(var(--radix-popover-content-available-height, calc(100dvh - 1rem)), calc(100dvh - 1rem))",

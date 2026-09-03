@@ -251,7 +251,7 @@ export function SelectOrInput<T extends Primitive = string>(
       {open && (
         <div
           className={cn(
-            "absolute left-0 right-0 z-50 mt-1 rounded-md border bg-accent-1 text-popover-foreground shadow-md",
+            "absolute left-0 right-0 z-50 mt-1 rounded-md bg-accent-1 text-popover-foreground shadow-md",
             "max-h-60 overflow-auto",
             listClassName
           )}

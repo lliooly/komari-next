@@ -283,7 +283,6 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
             p="2"
             justify="between"
             align="center"
-            className="border-b-1"
           >
             <Flex gap="3" align="center">
               <IconButton
@@ -396,7 +395,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
           >
             <Flex
               gap="3"
-              className="p-2 border-r-1"
+              className="p-2"
               direction="column"
               justify="start"
               align="start"
@@ -479,7 +478,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                       <div key={item.path}>
                         
                         <Flex
-                          className="p-2 gap-2 border-l-[4px] border-transparent cursor-pointer hover:bg-accent-3 rounded-md"
+                          className="p-2 gap-2 cursor-pointer hover:bg-accent-3 rounded-md"
                           align="center"
                           onClick={() => {
                             //const currentlyOpen = openSubMenus[item.path];
@@ -673,11 +672,10 @@ const SidebarItem = ({
           className="p-2 gap-2 h-full"
           align="center"
           style={{
-            borderLeft: "4px solid transparent",
             borderRadius: "6px",
             backgroundColor: "transparent",
             color: "inherit",
-            transition: "background-color 0.2s, border-color 0.2s",
+            transition: "background-color 0.2s",
           }}
         >
           <span
@@ -711,13 +709,10 @@ const SidebarItem = ({
         className="p-2 gap-2"
         align="center"
         style={{
-          borderLeft: isActive
-            ? "4px solid var(--accent-8)"
-            : "4px solid transparent",
           borderRadius: "6px",
           backgroundColor: isActive ? "var(--accent-4)" : "transparent",
           color: isActive ? "var(--accent-10)" : "inherit",
-          transition: "background-color 0.2s, border-color 0.2s",
+          transition: "background-color 0.2s",
         }}
       >
         <span

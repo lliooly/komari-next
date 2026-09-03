@@ -113,12 +113,13 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input
             ref={searchRef}
+            data-card-blur-surface="true"
             placeholder={t("search.placeholder", {
               defaultValue: "Search nodes... (Press '/' to focus)",
             })}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-10 h-11 bg-card border-none shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
+            className="pl-10 pr-10 h-11 bg-card shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
           />
           {searchTerm && (
             <Button
@@ -137,7 +138,10 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
 
         {/* View Mode & Group Selector */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border shadow-sm">
+          <div
+            data-card-blur-surface="true"
+            className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg shadow-sm"
+          >
             <Button
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="sm"
@@ -169,7 +173,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
         {showGroupSelector && (
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <Tabs value={selectedGroup} onValueChange={setSelectedGroup} className="w-auto">
-              <TabsList className="h-10 bg-muted/50 p-1 border">
+              <TabsList className="h-10 bg-muted/50 p-1">
                 <TabsTrigger value="all" className="px-4">
                   {t("common.all", { defaultValue: "All" })}
                 </TabsTrigger>
@@ -220,7 +224,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
 
       {/* Node Display Area */}
       {filteredNodes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg border border-dashed">
+        <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg">
           <span className="text-lg text-muted-foreground mb-2">
             {searchTerm.trim()
               ? t("search.no_results", { defaultValue: "No matching nodes found" })

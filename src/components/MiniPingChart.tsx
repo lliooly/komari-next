@@ -184,7 +184,7 @@ const MiniPingChart = ({
     });
 
     return (
-      <div className="pointer-events-auto max-h-[min(60dvh,22rem)] min-w-[12rem] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-lg border bg-background p-2 shadow-sm touch-pan-y">
+      <div className="pointer-events-auto max-h-[min(60dvh,22rem)] min-w-[12rem] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-lg bg-background p-2 shadow-sm touch-pan-y">
         <div className="text-xs text-muted-foreground mb-2">{formattedDate}</div>
         <div className="grid gap-1">
           {payload.map((entry: any, index: number) => {

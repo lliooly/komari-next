@@ -247,14 +247,14 @@ export function NodeMapView({
 
   if (!summary.totalNodes) {
     return (
-      <Card className="overflow-hidden rounded-[28px] border-border/70 bg-card/95 shadow-sm">
+      <Card className="overflow-hidden rounded-lg bg-card/95 shadow-sm">
         {!mapOnly && (
           <CardHeader>
             <CardTitle>{t("mapView.title", { defaultValue: "Global Distribution" })}</CardTitle>
           </CardHeader>
         )}
         <CardContent>
-          <div className="rounded-3xl border border-dashed border-border/70 bg-muted/40 px-6 py-12 text-center text-sm text-muted-foreground">
+          <div className="rounded-lg bg-muted/40 px-6 py-12 text-center text-sm text-muted-foreground">
             {t("nodes.empty", { defaultValue: "No node data" })}
           </div>
         </CardContent>
@@ -266,12 +266,12 @@ export function NodeMapView({
     <Card
       className={
         mapOnly
-          ? "node-map-view overflow-visible rounded-none border-0 bg-transparent shadow-none"
-          : "node-map-view overflow-hidden rounded-[28px] border-border/70 bg-card/95 shadow-sm"
+          ? "node-map-view overflow-visible rounded-none bg-transparent shadow-none"
+          : "node-map-view overflow-hidden rounded-lg bg-card/95 shadow-sm"
       }
     >
       {!mapOnly && (
-        <CardHeader className="space-y-4 border-b border-border/70 pb-5">
+        <CardHeader className="space-y-4 pb-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-3 py-1 text-xs font-medium text-sky-700 dark:bg-sky-500/14 dark:text-sky-300">

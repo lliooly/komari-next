@@ -368,7 +368,7 @@ const PingChart = ({ uuid }: { uuid: string }) => {
             }}
           >
             {latestValues.map((task) => (
-              <div key={task.id} className="flex flex-row items-center rounded">
+              <div key={task.id} className="flex flex-row items-center rounded-lg">
                 <div
                   className="w-1 h-6 rounded-xs "
                   style={{ backgroundColor: task.color }}

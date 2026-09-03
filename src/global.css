@@ -59,10 +59,13 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  /* Rectangular UI intentionally uses one radius at every semantic size. */
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
 }
 
 :root {
@@ -151,6 +154,11 @@
   }
 }
 
+/* Borderless surface language: cards and opt-in surfaces use depth, not outlines. */
+:where([data-slot="card"], [data-card-blur-surface="true"]) {
+  border: 0;
+}
+
 body[data-custom-background="true"] {
   position: relative;
   z-index: 0;
@@ -198,7 +206,7 @@ body[data-card-blur="true"] :is(
   .node-map-view__hover-card
 ) {
   background: color-mix(in oklab, var(--card) var(--komari-card-background-alpha, 82%), transparent);
-  border-color: color-mix(in oklab, var(--border) var(--komari-card-border-alpha, 90%), transparent);
+  border: 0;
   -webkit-backdrop-filter: var(--komari-card-backdrop-filter, none);
   backdrop-filter: var(--komari-card-backdrop-filter, none);
 }
@@ -218,9 +226,6 @@ body[data-card-blur="true"][data-card-blur-type="glass"] :is(
       color-mix(in oklab, var(--card) var(--komari-card-glass-middle-alpha, 36%), transparent) 52%,
       color-mix(in oklab, var(--card) var(--komari-card-glass-end-alpha, 24%), transparent) 100%
     );
-  border-color: color-mix(in oklab, var(--border) var(--komari-card-border-alpha, 90%), white var(--komari-card-glass-border-white-mix, 58%));
-  outline: 1px solid rgba(255, 255, 255, var(--komari-card-glass-outline-alpha, 0.3));
-  outline-offset: -1px;
   box-shadow:
     0 24px 64px rgba(15, 23, 42, var(--komari-card-glass-shadow-alpha, 0.2)),
     0 8px 22px rgba(15, 23, 42, var(--komari-card-glass-secondary-shadow-alpha, 0.12)),
@@ -243,8 +248,6 @@ body[data-card-blur="true"][data-card-blur-type="glass"] :is(
       color-mix(in oklab, var(--card) var(--komari-card-glass-middle-alpha, 34%), transparent) 54%,
       color-mix(in oklab, var(--card) var(--komari-card-glass-end-alpha, 22%), transparent) 100%
     );
-  border-color: color-mix(in oklab, var(--border) var(--komari-card-border-alpha, 90%), white var(--komari-card-glass-dark-border-white-mix, 24%));
-  outline-color: rgba(255, 255, 255, var(--komari-card-glass-dark-outline-alpha, 0.16));
   box-shadow:
     0 26px 70px rgba(0, 0, 0, var(--komari-card-glass-dark-shadow-alpha, 0.42)),
     0 8px 24px rgba(0, 0, 0, var(--komari-card-glass-dark-secondary-shadow-alpha, 0.28)),
@@ -259,8 +262,6 @@ body[data-card-blur="true"][data-card-blur-type="glass"] :is(
 ::-webkit-scrollbar-thumb {
   background: rgba(80,80,80,0.4);
   border-radius: 4px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-button {

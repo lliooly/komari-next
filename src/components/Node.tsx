@@ -148,7 +148,7 @@ function PingHistoryStrip({
   isLoaded: boolean;
 }) {
   return (
-    <div className="min-w-0 rounded-md border border-border/45 bg-background/45 px-2 py-1.5">
+    <div className="min-w-0 rounded-md bg-background/45 px-2 py-1.5">
       <div className="mb-1 flex items-center justify-between gap-2 text-[10px] leading-none">
         <span className="truncate text-muted-foreground">{label}</span>
         <span className="shrink-0 font-mono font-semibold text-foreground/80">{value}</span>
@@ -291,18 +291,18 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
 
   // Layout-specific styles
   const cardStyles = {
-    classic: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg hover:border-primary/50 overflow-hidden group border",
-    modern: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg overflow-hidden group border-none bg-gradient-to-br from-card to-card/50 shadow-sm",
-    minimal: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-md overflow-hidden group bg-gradient-to-br from-muted/40 to-muted/20 rounded-xl border border-border/50",
-    detailed: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-xl overflow-hidden group border-2 shadow-md hover:border-primary/30",
-    compact: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg hover:border-primary/50 overflow-hidden group border",
+    classic: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg overflow-hidden group",
+    modern: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg overflow-hidden group bg-gradient-to-br from-card to-card/50 shadow-sm",
+    minimal: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-md overflow-hidden group bg-gradient-to-br from-muted/40 to-muted/20 rounded-xl",
+    detailed: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-xl overflow-hidden group shadow-md",
+    compact: "flex h-full w-full flex-col transition-all duration-200 hover:shadow-lg overflow-hidden group",
   };
 
   const headerStyles = {
     classic: "pb-2 pt-4 px-4 space-y-0",
-    modern: "pb-3 pt-3 px-4 space-y-0 bg-primary/5 border-b border-primary/10",
+    modern: "pb-3 pt-3 px-4 space-y-0 bg-primary/5",
     minimal: "pb-2 pt-4 px-4 space-y-0",
-    detailed: "pb-3 pt-5 px-5 space-y-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 border-b-2",
+    detailed: "pb-3 pt-5 px-5 space-y-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20",
     compact: "pb-2 pt-4 px-4 space-y-0",
   };
 
@@ -316,9 +316,9 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
 
   const footerStyles = {
     classic: "shrink-0 pb-3 pt-0 px-4 flex justify-between items-center",
-    modern: "shrink-0 pb-3 pt-0 px-4 flex justify-between items-center bg-muted/20 border-t",
+    modern: "shrink-0 pb-3 pt-0 px-4 flex justify-between items-center bg-muted/20",
     minimal: "shrink-0 pb-3 pt-0 px-4 flex justify-between items-center",
-    detailed: "shrink-0 pb-4 pt-0 px-5 flex justify-between items-center bg-muted/30 border-t-2",
+    detailed: "shrink-0 pb-4 pt-0 px-5 flex justify-between items-center bg-muted/30",
     compact: "shrink-0 pb-3 pt-0 px-4 flex justify-between items-center",
   };
 
@@ -361,12 +361,12 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
                 </div>
               </div>
               <div className="flex items-center text-[11px] text-muted-foreground/80 gap-2 mt-0.5">
-                <span className="flex items-center gap-1.5 bg-muted/50 px-1.5 py-0.5 rounded min-w-0">
+                <span className="flex items-center gap-1.5 bg-muted/50 px-1.5 py-0.5 rounded-lg min-w-0">
                   <img src={getOSImage(basic.os)} alt={basic.os} className="w-3 h-3 flex-shrink-0" />
                   <span className="truncate">{getOSName(basic.os)}</span>
                 </span>
                 {themeConfig.cardLayout === 'detailed' && (
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-primary/10 rounded text-primary">
+                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-primary/10 rounded-lg text-primary">
                     <Flag flag={basic.region} />
                   </span>
                 )}
@@ -623,9 +623,9 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
 
         {/* Network Stats */}
         <div className={`rounded-lg p-3 space-y-2 text-sm ${
-          themeConfig.cardLayout === 'modern' ? 'bg-primary/5 border border-primary/10' :
-          themeConfig.cardLayout === 'minimal' ? 'bg-background/50 border border-border/30' :
-          themeConfig.cardLayout === 'detailed' ? 'bg-muted/40 border-2 border-muted' :
+          themeConfig.cardLayout === 'modern' ? 'bg-primary/5' :
+          themeConfig.cardLayout === 'minimal' ? 'bg-background/50' :
+          themeConfig.cardLayout === 'detailed' ? 'bg-muted/40' :
           'bg-muted/30'
         }`}>
           <div className="flex justify-between items-center">
