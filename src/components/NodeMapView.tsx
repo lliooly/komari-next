@@ -6,6 +6,7 @@ import { geoGraticule10, geoNaturalEarth1, geoPath } from "d3-geo";
 import { MapPinned } from "lucide-react";
 import { feature } from "topojson-client";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import type { NodeBasicInfo } from "@/contexts/NodeListContext";
 import type { LiveData } from "@/types/LiveData";
@@ -77,6 +78,7 @@ export function NodeMapView({
   mapOnly = false,
 }: NodeMapViewProps) {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
   const summary = useMemo(() => buildMapViewSummary(nodes, liveData), [nodes, liveData]);
   const [hoveredRegion, setHoveredRegion] = useState<HoveredRegion | null>(null);
   const mapSurfaceRef = useRef<HTMLDivElement | null>(null);
@@ -367,51 +369,57 @@ export function NodeMapView({
               </g>
 
               <g className="node-map-view__marker-layer">
-                {projectedMap.countries
-                  .filter((country) => country.activeRegion && country.marker)
-                  .map((country) => {
-                    const region = country.activeRegion;
-                    const marker = country.marker;
-                    if (!region || !marker) {
-                      return null;
-                    }
+                <AnimatePresence initial={false}>
+                  {projectedMap.countries
+                    .filter((country) => country.activeRegion && country.marker)
+                    .map((country) => {
+                      const region = country.activeRegion;
+                      const marker = country.marker;
+                      if (!region || !marker) {
+                        return null;
+                      }
 
-                    const isSelected = hoveredRegion?.regionKey === region.key;
-                    const ariaLabel = t("mapView.countrySummary", {
-                      name: region.label,
-                      total: region.total,
-                      online: region.online,
-                      offline: region.offline,
-                      defaultValue:
-                        "{{name}}: {{total}} nodes, {{online}} online, {{offline}} offline",
-                    });
+                      const isSelected = hoveredRegion?.regionKey === region.key;
+                      const ariaLabel = t("mapView.countrySummary", {
+                        name: region.label,
+                        total: region.total,
+                        online: region.online,
+                        offline: region.offline,
+                        defaultValue:
+                          "{{name}}: {{total}} nodes, {{online}} online, {{offline}} offline",
+                      });
 
-                    return (
-                      <g
-                        key={`${country.name}-marker`}
-                        className={`node-map-view__marker status-${region.status}${isSelected ? " is-selected" : ""}`}
-                        data-country-code={region.flagCode}
-                        data-country-name={country.name}
-                        aria-label={ariaLabel}
-                        onPointerEnter={(event) => updateHoveredRegion(event, region)}
-                        onPointerMove={updateHoverPosition}
-                        onPointerLeave={clearHoveredRegion}
-                      >
-                        <circle
-                          cx={marker.x}
-                          cy={marker.y}
-                          r="9"
-                          className="node-map-view__marker-halo"
-                        />
-                        <circle
-                          cx={marker.x}
-                          cy={marker.y}
-                          r="4.2"
-                          className="node-map-view__marker-dot"
-                        />
-                      </g>
-                    );
-                  })}
+                      return (
+                        <motion.g
+                          key={`${country.name}-marker-${region.status}`}
+                          className={`node-map-view__marker status-${region.status}${isSelected ? " is-selected" : ""}`}
+                          data-country-code={region.flagCode}
+                          data-country-name={country.name}
+                          aria-label={ariaLabel}
+                          initial={prefersReducedMotion ? false : { opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
+                          transition={{ duration: 0.22, ease: "easeOut" }}
+                          onPointerEnter={(event) => updateHoveredRegion(event, region)}
+                          onPointerMove={updateHoverPosition}
+                          onPointerLeave={clearHoveredRegion}
+                        >
+                          <circle
+                            cx={marker.x}
+                            cy={marker.y}
+                            r="9"
+                            className="node-map-view__marker-halo"
+                          />
+                          <circle
+                            cx={marker.x}
+                            cy={marker.y}
+                            r="4.2"
+                            className="node-map-view__marker-dot"
+                          />
+                        </motion.g>
+                      );
+                    })}
+                </AnimatePresence>
               </g>
             </svg>
 

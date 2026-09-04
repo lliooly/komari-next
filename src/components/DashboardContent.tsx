@@ -3,6 +3,7 @@
 import React, { Suspense, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Clock, Globe, Activity, ArrowUpRight, Zap } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -19,6 +20,7 @@ import { NodeMapView } from "@/components/NodeMapView";
 import UptimeKumaStatus from "@/components/UptimeKumaStatus";
 import { useStatusCardsVisibility } from "@/hooks/useStatusCardsVisibility";
 import { useMounted } from "@/hooks/useMounted";
+import { AnimatedNumber, DataChange } from "@/components/ui/animated-number";
 
 // Intelligent speed formatting function
 const formatSpeed = (bytes: number): string => {
@@ -52,7 +54,7 @@ function DashboardGauge({
       <div className="ds-mini-gauge-arc">
         <div className="ds-mini-gauge-fill" style={{ ["--pct" as string]: `${pct}%` }} />
         <div className="ds-mini-gauge-center">
-          <div className="ds-mini-gauge-value">{Math.round(value)}</div>
+          <AnimatedNumber value={value} className="ds-mini-gauge-value" />
           {label ? <div className="ds-mini-gauge-label">{label}</div> : null}
         </div>
       </div>
@@ -120,6 +122,7 @@ const renderSpeedStatusValue = ({
 export default function DashboardContent() {
   const mounted = useMounted();
   const [t] = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
   const { live_data } = useLiveData();
   const { publicInfo } = usePublicInfo();
   const { themeConfig, isThemeLoaded, managedThemeSettings } = useTheme();
@@ -135,25 +138,41 @@ export default function DashboardContent() {
   const { nodeList, isLoading, error, refresh } = useNodeList();
 
   const renderTrafficPair = (up: string, down: string) => {
+    const animatedUp = <DataChange valueKey={up}>{up}</DataChange>;
+    const animatedDown = <DataChange valueKey={down}>{down}</DataChange>;
+
     if (themeConfig.cardLayout === "modern") {
       return (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <span>↑ {up}</span>
+          <span>↑ {animatedUp}</span>
           <span className="text-muted-foreground">/</span>
-          <span>↓ {down}</span>
+          <span>↓ {animatedDown}</span>
         </div>
       );
     }
 
     return (
       <div className="flex flex-col">
-        <div>↑ {up}</div>
-        <div>↓ {down}</div>
+        <div>↑ {animatedUp}</div>
+        <div>↓ {animatedDown}</div>
       </div>
     );
   };
 
   const [statusCardsVisibility] = useStatusCardsVisibility();
+  const onlineNodes = live_data?.data?.online ?? [];
+  const onlineCount = onlineNodes.length;
+  const totalCount = nodeList?.length ?? 0;
+  const onlineRegionCount = nodeList
+    ? Object.entries(
+        nodeList.reduce((acc, item) => {
+          if (onlineNodes.includes(item.uuid)) {
+            acc[item.region] = (acc[item.region] || 0) + 1;
+          }
+          return acc;
+        }, {} as Record<string, number>)
+      ).length
+    : 0;
 
   // Status cards configuration
   const statusCards = [
@@ -168,25 +187,20 @@ export default function DashboardContent() {
       key: "currentOnline",
       title: t("current_online"),
       icon: <Activity className="h-4 w-4 text-muted-foreground" />,
-      getValue: () =>
-        `${live_data?.data?.online.length ?? 0} / ${nodeList?.length ?? 0}`,
+      renderValue: () => (
+        <span className="inline-flex items-baseline gap-0 tabular-nums">
+          <AnimatedNumber value={onlineCount} />
+          <span className="text-muted-foreground"> / </span>
+          <AnimatedNumber value={totalCount} />
+        </span>
+      ),
       visible: statusCardsVisibility.currentOnline,
     },
     {
       key: "regionOverview",
       title: t("region_overview"),
       icon: <Globe className="h-4 w-4 text-muted-foreground" />,
-      getValue: () =>
-        nodeList
-          ? Object.entries(
-              nodeList.reduce((acc, item) => {
-                if (live_data?.data.online.includes(item.uuid)) {
-                  acc[item.region] = (acc[item.region] || 0) + 1;
-                }
-                return acc;
-              }, {} as Record<string, number>)
-            ).length
-          : 0,
+      renderValue: () => <AnimatedNumber value={onlineRegionCount} />,
       visible: statusCardsVisibility.regionOverview,
     },
     {
@@ -280,18 +294,28 @@ export default function DashboardContent() {
           themeConfig.cardLayout === 'compact' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4' :
           'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4'
         }`}>
-          {statusCards
-            .filter((card) => card.visible)
-            .map((card) => (
-              <TopCard
-                key={card.key}
-                title={card.title}
-                value={card.renderValue ? card.renderValue() : card.getValue?.()}
-                icon={card.icon}
-                layout={themeConfig.cardLayout}
-                structuredValue={card.structuredValue}
-              />
-            ))}
+          <AnimatePresence initial={false} mode="popLayout">
+            {statusCards
+              .filter((card) => card.visible)
+              .map((card) => (
+                <motion.div
+                  key={card.key}
+                  layout="position"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <TopCard
+                    title={card.title}
+                    value={card.renderValue()}
+                    icon={card.icon}
+                    layout={themeConfig.cardLayout}
+                    structuredValue={card.structuredValue}
+                  />
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </div>
 
         {mounted && isThemeLoaded && statusCardsVisibility.mapView && (

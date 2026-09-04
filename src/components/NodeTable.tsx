@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -31,6 +31,7 @@ import SpaLink from "./SpaLink";
 import { getOSImage } from "@/utils";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface NodeTableProps {
   nodes: NodeBasicInfo[];
@@ -48,10 +49,21 @@ interface SortState {
 const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
   const [t] = useTranslation();
   const { guestDisplay, themeConfig } = useTheme();
+  const prefersReducedMotion = useReducedMotion();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [sortState, setSortState] = useState<SortState>({ field: null, order: 'default' });
+  const [animateReorder, setAnimateReorder] = useState(false);
+  const sortAnimationTimerRef = useRef<number | null>(null);
   const showPrice = guestDisplay.showPrice;
   const showExpiredAt = guestDisplay.showExpiredAt;
+
+  useEffect(() => {
+    return () => {
+      if (sortAnimationTimerRef.current !== null) {
+        window.clearTimeout(sortAnimationTimerRef.current);
+      }
+    };
+  }, []);
 
   const toggleRowExpansion = (uuid: string) => {
     setExpandedRows((prev) => {
@@ -68,6 +80,15 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
   const handleSort = (field: SortField) => {
     return (event: React.MouseEvent) => {
       event.preventDefault();
+
+      setAnimateReorder(true);
+      if (sortAnimationTimerRef.current !== null) {
+        window.clearTimeout(sortAnimationTimerRef.current);
+      }
+      sortAnimationTimerRef.current = window.setTimeout(() => {
+        sortAnimationTimerRef.current = null;
+        setAnimateReorder(false);
+      }, 280);
       
       setSortState((prev) => {
         if (prev.field === field) {
@@ -336,12 +357,15 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
 
             return (
               <React.Fragment key={node.uuid}>
-                <TableRow
+                <motion.tr
+                  data-slot="table-row"
                   className={cn(
-                    "cursor-pointer hover:bg-muted/50 transition-colors",
+                    "transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer",
                     !isOnline && "opacity-60",
                     isExpanded && "bg-muted/50"
                   )}
+                  layout={animateReorder && prefersReducedMotion !== true ? "position" : false}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                   onClick={() => toggleRowExpansion(node.uuid)}
                 >
                   <TableCell className="py-2 px-2">
@@ -393,15 +417,22 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                   <TableCell className="py-2 px-2">
                     <div className="flex items-center justify-center gap-2">
                       <Badge
+                        key={`${node.uuid}-${isOnline ? "online" : "offline"}`}
                         variant="outline"
                         className={cn(
-                          "font-normal text-xs px-2 py-0.5 h-6",
+                          "node-status-badge-transition font-normal text-xs px-2 py-0.5 h-6",
                           isOnline
                             ? "text-green-600 bg-green-500/10 dark:text-green-400 dark:bg-green-500/20"
                             : "text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20"
                         )}
                       >
-                         <span className={cn("w-1.5 h-1.5 rounded-full mr-1.5", isOnline ? "bg-green-500 animate-pulse" : "bg-red-500")} />
+                        <span
+                          key={`${node.uuid}-${isOnline ? "online" : "offline"}`}
+                          className={cn(
+                            "status-indicator-change w-1.5 h-1.5 rounded-full mr-1.5",
+                            isOnline ? "bg-green-500" : "bg-red-500"
+                          )}
+                        />
                         {isOnline ? t("nodeCard.online") : t("nodeCard.offline")}
                       </Badge>
                       {nodeData.message && (
@@ -504,7 +535,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                       )}
                     </div>
                   </TableCell>
-                </TableRow>
+                </motion.tr>
 
                 {isExpanded && (
                   <TableRow

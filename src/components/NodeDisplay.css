@@ -132,6 +132,21 @@
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 
+.mini-ping-chart {
+  animation: mini-ping-chart-enter 220ms ease-out both;
+}
+
+@keyframes mini-ping-chart-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .ds-metric-speed-panel {
   display: flex;
   flex-direction: column;
@@ -264,5 +279,11 @@
 
   .ds-mini-gauge-label {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-ping-chart {
+    animation: none;
   }
 }

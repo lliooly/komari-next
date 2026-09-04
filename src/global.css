@@ -27,6 +27,26 @@
   transition: transform 200ms ease-out;
 }
 
+.telemetry-value {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.telemetry-value__content {
+  display: inline-block;
+  animation: telemetry-value-change 180ms ease-out both;
+}
+
+.node-status-badge-transition {
+  transform-origin: center;
+  animation: node-status-badge-change 220ms ease-out both;
+}
+
+.status-indicator-change {
+  animation: status-indicator-change 320ms ease-out both;
+}
+
 @keyframes action-feedback-icon-spin {
   to {
     transform: rotate(360deg);
@@ -79,6 +99,43 @@
   }
 }
 
+@keyframes telemetry-value-change {
+  from {
+    opacity: 0.55;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes node-status-badge-change {
+  from {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes status-indicator-change {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    transform: scale(0.9);
+  }
+  55% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .action-feedback-icon__item--loading,
   .action-feedback-icon__item--success,
@@ -92,6 +149,18 @@
 
   .semantic-icon-chevron {
     transition: none;
+  }
+
+  .telemetry-value__content,
+  .node-status-badge-transition,
+  .status-indicator-change,
+  .telemetry-progress-indicator,
+  .adaptive-chart__arc,
+  .usage-bar__arc,
+  .usage-bar__fill,
+  .usage-bar__segment {
+    animation: none;
+    transition: none !important;
   }
 }
 

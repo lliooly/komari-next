@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { TrendingUp, ArrowUp, ArrowDown, Activity, Upload, Download } from "lucide-react";
 import type { TFunction } from "i18next";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ import AdaptiveChart from "./AdaptiveChart";
 import MiniPingChartFloat from "./MiniPingChartFloat";
 import SpaLink from "./SpaLink";
 import Tips from "./ui/tips";
+import { DataChange } from "./ui/animated-number";
 
 // --- Helper Functions ---
 
@@ -355,7 +357,11 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
                       </Button>
                     }
                   />
-                  <Badge variant={online ? "default" : "destructive"} className={online ? "bg-green-600 hover:bg-green-700" : ""}>
+                  <Badge
+                    key={online ? "node-online" : "node-offline"}
+                    variant={online ? "default" : "destructive"}
+                    className={online ? "node-status-badge-transition bg-green-600 hover:bg-green-700" : "node-status-badge-transition"}
+                  >
                     {online ? t("nodeCard.online") : t("nodeCard.offline")}
                   </Badge>
                 </div>
@@ -440,7 +446,9 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
                   <div className="min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-muted-foreground text-xs">CPU</span>
-                      <span className="font-mono text-xs text-foreground/80">{liveData.cpu.usage.toFixed(1)}%</span>
+                      <DataChange className="font-mono text-xs text-foreground/80" valueKey={Math.round(liveData.cpu.usage)}>
+                        {liveData.cpu.usage.toFixed(1)}%
+                      </DataChange>
                     </div>
                     <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                       <div
@@ -456,7 +464,9 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
                   <div className="min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-muted-foreground text-xs">{t("nodeCard.ram", { defaultValue: "内存" })}</span>
-                      <span className="font-mono text-xs text-foreground/80">{memoryUsagePercent.toFixed(1)}%</span>
+                      <DataChange className="font-mono text-xs text-foreground/80" valueKey={Math.round(memoryUsagePercent)}>
+                        {memoryUsagePercent.toFixed(1)}%
+                      </DataChange>
                     </div>
                     <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                       <div
@@ -476,7 +486,9 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
                   <div className="min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-muted-foreground text-xs">{t("nodeCard.disk", { defaultValue: "硬盘" })}</span>
-                      <span className="font-mono text-xs text-foreground/80">{diskUsagePercent.toFixed(1)}%</span>
+                      <DataChange className="font-mono text-xs text-foreground/80" valueKey={Math.round(diskUsagePercent)}>
+                        {diskUsagePercent.toFixed(1)}%
+                      </DataChange>
                     </div>
                     <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                       <div
@@ -765,6 +777,7 @@ const PING_STATS_ROW_ROOT_MARGIN = "360px 0px";
 export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
   const gridRef = React.useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = React.useState(1);
+  const prefersReducedMotion = useReducedMotion();
   const { themeConfig } = useTheme();
   const isCompact = themeConfig.cardLayout === 'compact';
   const NODE_GRID_MIN_COL = isCompact ? 320 : NODE_GRID_MIN_COLUMN_WIDTH;
@@ -999,29 +1012,40 @@ export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
         gridTemplateColumns: `repeat(auto-fill, minmax(${NODE_GRID_MIN_COL}px, 1fr))`,
       }}
     >
-      {sortedNodes.map((node, index) => {
-        const isOnline = onlineNodes.includes(node.uuid);
-        const nodeData =
-          liveData && liveData.data ? liveData.data[node.uuid] : undefined;
-        const rowIndex = Math.floor(index / columns);
+      <AnimatePresence initial={prefersReducedMotion !== true}>
+        {sortedNodes.map((node, index) => {
+          const isOnline = onlineNodes.includes(node.uuid);
+          const nodeData =
+            liveData && liveData.data ? liveData.data[node.uuid] : undefined;
+          const rowIndex = Math.floor(index / columns);
 
-        return (
-          <div
-            key={node.uuid}
-            data-node-grid-item="true"
-            data-row-index={rowIndex}
-            data-node-uuid={node.uuid}
-            className="flex min-w-0"
-          >
-            <Node
-              basic={node}
-              live={nodeData}
-              online={isOnline}
-              pingStatsEnabled={pingStatsActiveNodes.has(node.uuid)}
-            />
-          </div>
-        );
-      })}
+          return (
+            <motion.div
+              key={node.uuid}
+              data-node-grid-item="true"
+              data-row-index={rowIndex}
+              data-node-uuid={node.uuid}
+              className="flex h-full min-w-0"
+              layout={prefersReducedMotion ? false : "position"}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+              animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+              transition={{
+                duration: 0.22,
+                ease: "easeOut",
+                delay: prefersReducedMotion ? 0 : Math.min(index, 5) * 0.04,
+              }}
+            >
+              <Node
+                basic={node}
+                live={nodeData}
+                online={isOnline}
+                pingStatsEnabled={pingStatsActiveNodes.has(node.uuid)}
+              />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
     </div>
   );
 };

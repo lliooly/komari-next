@@ -226,7 +226,7 @@ const MiniPingChart = ({
   return (
     <Card
       style={{ width, maxWidth: "100%", height: 'auto', minHeight: height }}
-      className="flex w-full min-w-0 max-w-full flex-col gap-2 overflow-visible p-3"
+      className="mini-ping-chart flex w-full min-w-0 max-w-full flex-col gap-2 overflow-visible p-3"
     >
       {loading && (
         <div

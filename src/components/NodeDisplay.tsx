@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { Search, Grid3X3, Table2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useNodeViewMode } from "@/hooks/useNodeViewMode";
 import type { NodeBasicInfo } from "@/contexts/NodeListContext";
@@ -31,6 +32,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
   );
   const searchRef = useRef<HTMLInputElement>(null);
   const { guestDisplay, isThemeLoaded } = useTheme();
+  const prefersReducedMotion = useReducedMotion();
 
   // 获取所有的分组
   const groups = useMemo(() => {
@@ -205,7 +207,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
 
         {/* Results Stats */}
         <div className="flex items-center gap-2 px-1">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          <div className="h-2 w-2 rounded-full bg-green-500" />
           {searchTerm.trim() ? (
             <span className="text-sm font-medium text-muted-foreground">
               {t("search.results", {
@@ -239,36 +241,59 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
       </div>
 
       {/* Node Display Area */}
-      {filteredNodes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg">
-          <span className="text-lg text-muted-foreground mb-2">
-            {searchTerm.trim()
-              ? t("search.no_results", { defaultValue: "No matching nodes found" })
-              : t("nodes.empty", { defaultValue: "No node data" })}
-          </span>
-          {searchTerm.trim() && (
-            <span className="text-sm text-muted-foreground">
-              {t("search.try_different", {
-                defaultValue: "Try different keywords",
-              })}
+      <AnimatePresence mode="wait" initial={false}>
+        {filteredNodes.length === 0 ? (
+          <motion.div
+            key="empty"
+            className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            <span className="text-lg text-muted-foreground mb-2">
+              {searchTerm.trim()
+                ? t("search.no_results", { defaultValue: "No matching nodes found" })
+                : t("nodes.empty", { defaultValue: "No node data" })}
             </span>
-          )}
-        </div>
-      ) : (
-        <>
-          {viewMode === "grid" ? (
-            isThemeLoaded
+            {searchTerm.trim() && (
+              <span className="text-sm text-muted-foreground">
+                {t("search.try_different", {
+                  defaultValue: "Try different keywords",
+                })}
+              </span>
+            )}
+          </motion.div>
+        ) : viewMode === "grid" ? (
+          <motion.div
+            key="grid"
+            className="w-full"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {isThemeLoaded
               ? <NodeGrid nodes={filteredNodes} liveData={liveData} />
-              : <div className="py-4 w-full min-h-[200px]" />
-          ) : (
+              : <div className="py-4 w-full min-h-[200px]" />}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="table"
+            className="w-full"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
             <Suspense
               fallback={<div className="p-4 text-center">Loading table...</div>}
             >
               <NodeTable nodes={filteredNodes} liveData={liveData} />
             </Suspense>
-          )}
-        </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

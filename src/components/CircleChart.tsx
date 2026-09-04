@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { DataChange } from "@/components/ui/animated-number";
 
 interface CircleChartProps {
   value: number; // 0-100
@@ -90,6 +91,7 @@ export default function CircleChart({
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
+          className="adaptive-chart__arc"
           style={transitionStyle}
         />
       </svg>
@@ -104,9 +106,9 @@ export default function CircleChart({
           {renderSVG(36, 16)}
           {/* Centered Percentage for compact mode */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-[11px] font-bold text-foreground">
+            <DataChange valueKey={Math.round(chartValue)} className="text-[11px] font-bold text-foreground">
               {Math.round(textValue)}%
-            </span>
+            </DataChange>
           </div>
         </div>
       </div>
@@ -120,9 +122,9 @@ export default function CircleChart({
         {renderSVG(40, 9)}
         {/* Centered Percentage */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="text-base font-bold text-foreground drop-shadow-sm tracking-tight">
+          <DataChange valueKey={Math.round(chartValue)} className="text-base font-bold text-foreground drop-shadow-sm tracking-tight">
             {Math.round(textValue)}%
-          </span>
+          </DataChange>
         </div>
       </div>
 

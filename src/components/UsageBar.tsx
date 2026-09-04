@@ -65,6 +65,7 @@ const UsageBar = ({ value, label, compact = false, max = 100 }: UsageBarProps) =
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
+            className="usage-bar__arc"
             transform={`rotate(-90 ${compact ? 20 : 25} ${compact ? 20 : 25})`}
             style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
           />
@@ -107,6 +108,7 @@ const UsageBar = ({ value, label, compact = false, max = 100 }: UsageBarProps) =
             return (
               <div
                 key={i}
+                className="usage-bar__segment"
                 style={{
                   flex: 1,
                   height: `${(i + 1) * 10}%`,
@@ -137,6 +139,7 @@ const UsageBar = ({ value, label, compact = false, max = 100 }: UsageBarProps) =
           }}
         >
           <div
+            className="usage-bar__fill"
             style={{
               height: '100%',
               backgroundColor: `var(--${barColor}-9)`,
@@ -173,6 +176,7 @@ const UsageBar = ({ value, label, compact = false, max = 100 }: UsageBarProps) =
         }}
       >
         <div
+          className="usage-bar__fill"
           style={{
             height: '100%',
             backgroundColor: `var(--${barColor}-9)`,

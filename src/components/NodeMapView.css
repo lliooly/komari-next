@@ -103,6 +103,10 @@
   cursor: pointer;
 }
 
+.node-map-view__marker-layer {
+  isolation: isolate;
+}
+
 .node-map-view__marker-halo,
 .node-map-view__marker-dot {
   vector-effect: non-scaling-stroke;
@@ -151,6 +155,14 @@
   opacity: 0.88;
   r: 10.5;
   stroke-width: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node-map-view__country,
+  .node-map-view__marker-halo,
+  .node-map-view__marker-dot {
+    transition: none;
+  }
 }
 
 .node-map-view__legend {
