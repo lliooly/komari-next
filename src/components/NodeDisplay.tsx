@@ -16,13 +16,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { getRevealProps } from "@/lib/reveal";
 
 interface NodeDisplayProps {
   nodes: NodeBasicInfo[];
   liveData: LiveData;
+  revealDelay?: number;
 }
 
-const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
+const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData, revealDelay = 0 }) => {
   const [t] = useTranslation();
   const [viewMode, setViewMode] = useNodeViewMode();
   const [searchTerm, setSearchTerm] = useState("");
@@ -245,6 +247,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
         {filteredNodes.length === 0 ? (
           <motion.div
             key="empty"
+            {...getRevealProps(revealDelay)}
             className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -274,7 +277,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             {isThemeLoaded
-              ? <NodeGrid nodes={filteredNodes} liveData={liveData} />
+              ? <NodeGrid nodes={filteredNodes} liveData={liveData} revealDelay={revealDelay} />
               : <div className="py-4 w-full min-h-[200px]" />}
           </motion.div>
         ) : (
@@ -289,7 +292,7 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
             <Suspense
               fallback={<div className="p-4 text-center">Loading table...</div>}
             >
-              <NodeTable nodes={filteredNodes} liveData={liveData} />
+              <NodeTable nodes={filteredNodes} liveData={liveData} revealDelay={revealDelay} />
             </Suspense>
           </motion.div>
         )}

@@ -15,6 +15,7 @@ import { buildMapViewSummary, type MapRegionSummary } from "@/utils/mapRegions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Flag from "@/components/Flag";
+import { getRevealProps } from "@/lib/reveal";
 
 import "./NodeMapView.css";
 
@@ -22,6 +23,7 @@ interface NodeMapViewProps {
   nodes: NodeBasicInfo[];
   liveData: LiveData;
   mapOnly?: boolean;
+  revealDelay?: number;
 }
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
@@ -76,6 +78,7 @@ export function NodeMapView({
   nodes,
   liveData,
   mapOnly = false,
+  revealDelay = 0,
 }: NodeMapViewProps) {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
@@ -249,7 +252,7 @@ export function NodeMapView({
 
   if (!summary.totalNodes) {
     return (
-      <Card className="overflow-hidden rounded-lg bg-card/95 shadow-sm">
+      <Card {...getRevealProps(revealDelay)} className="overflow-hidden rounded-lg bg-card/95 shadow-sm">
         {!mapOnly && (
           <CardHeader>
             <CardTitle>{t("mapView.title", { defaultValue: "Global Distribution" })}</CardTitle>
@@ -266,6 +269,7 @@ export function NodeMapView({
 
   return (
     <Card
+      {...(mapOnly ? {} : getRevealProps(revealDelay))}
       className={
         mapOnly
           ? "node-map-view overflow-visible rounded-none bg-transparent shadow-none"
@@ -326,7 +330,11 @@ export function NodeMapView({
 
       <CardContent className={mapOnly ? "p-0" : "p-5 lg:p-6"}>
         <div className={mapOnly ? "node-map-view__layout node-map-view__layout--map-only" : "node-map-view__layout"}>
-          <div ref={mapSurfaceRef} className="node-map-view__surface">
+          <div
+            ref={mapSurfaceRef}
+            {...(mapOnly ? getRevealProps(revealDelay) : {})}
+            className="node-map-view__surface"
+          >
             <svg
               viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
               className="node-map-view__svg"
@@ -424,7 +432,10 @@ export function NodeMapView({
             </svg>
 
             <div className="node-map-view__legend node-map-view__legend--inset">
-              <div className="node-map-view__legend-card node-map-view__legend-card--status">
+              <div
+                {...getRevealProps(revealDelay + 60)}
+                className="node-map-view__legend-card node-map-view__legend-card--status"
+              >
                 <div className="node-map-view__legend-items node-map-view__legend-items--stacked">
                   <span className="node-map-view__legend-item">
                     <span className="node-map-view__legend-dot status-online" />
@@ -442,7 +453,10 @@ export function NodeMapView({
               </div>
 
               {summary.unmappedNodes.length > 0 && (
-                <div className="node-map-view__legend-card node-map-view__legend-card--stacked">
+                <div
+                  {...getRevealProps(revealDelay + 120)}
+                  className="node-map-view__legend-card node-map-view__legend-card--stacked"
+                >
                   <div className="node-map-view__legend-unmapped-header">
                     <span className="text-xs font-semibold text-foreground">
                       {t("mapView.unmappedRegions", { defaultValue: "Unmapped Regions" })}

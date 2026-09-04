@@ -21,6 +21,7 @@ import UptimeKumaStatus from "@/components/UptimeKumaStatus";
 import { useStatusCardsVisibility } from "@/hooks/useStatusCardsVisibility";
 import { useMounted } from "@/hooks/useMounted";
 import { AnimatedNumber, DataChange } from "@/components/ui/animated-number";
+import { getRevealProps } from "@/lib/reveal";
 
 // Intelligent speed formatting function
 const formatSpeed = (bytes: number): string => {
@@ -325,6 +326,7 @@ export default function DashboardContent() {
             nodes={nodeList ?? []}
             liveData={live_data?.data ?? { online: [], data: {} }}
             mapOnly
+            revealDelay={280}
           />
         )}
       </div>
@@ -333,10 +335,11 @@ export default function DashboardContent() {
         <NodeDisplay
           nodes={nodeList ?? []}
           liveData={live_data?.data ?? { online: [], data: {} }}
+          revealDelay={280}
         />
       </Suspense>
 
-      <UptimeKumaStatus settings={managedThemeSettings.uptimeKuma} />
+      <UptimeKumaStatus settings={managedThemeSettings.uptimeKuma} revealDelay={280} />
     </div>
   );
 }
@@ -361,13 +364,7 @@ const TopCard: React.FC<TopCardProps> = ({
   revealDelay = 0,
 }) => {
   const mobileStructuredValueClass = "h-6 w-[5.75rem] shrink-0 overflow-hidden";
-  const revealStyle = {
-    "--reveal-delay": `${revealDelay}ms`,
-  } as React.CSSProperties;
-  const revealProps = {
-    "data-reveal": "true",
-    style: revealStyle,
-  };
+  const revealProps = getRevealProps(revealDelay);
 
   // Classic layout: Traditional card with icon on right
   if (layout === 'classic') {

@@ -26,6 +26,7 @@ import type {
   UptimeKumaSettings,
 } from "@/lib/uptimeKuma";
 import { buildUptimeKumaUrls } from "@/lib/uptimeKuma";
+import { getRevealProps } from "@/lib/reveal";
 import { Badge, type BadgeColor } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +38,7 @@ import {
 
 interface UptimeKumaStatusProps {
   settings: Partial<UptimeKumaSettings> | undefined;
+  revealDelay?: number;
 }
 
 type StatusMeta = {
@@ -266,9 +268,9 @@ function ServiceRow({
   );
 }
 
-function LoadingCard({ title }: { title: ReactNode }) {
+function LoadingCard({ title, revealDelay = 0 }: { title: ReactNode; revealDelay?: number }) {
   return (
-    <Card data-card-blur-surface="true" aria-busy="true">
+    <Card {...getRevealProps(revealDelay)} data-card-blur-surface="true" aria-busy="true">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Activity className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -283,7 +285,7 @@ function LoadingCard({ title }: { title: ReactNode }) {
   );
 }
 
-export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
+export default function UptimeKumaStatus({ settings, revealDelay = 0 }: UptimeKumaStatusProps) {
   const [t] = useTranslation();
   const enabled = settings?.enabled === true;
   const { data, isLoading, error, lastUpdatedAt, refresh } =
@@ -304,13 +306,14 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
     return (
       <LoadingCard
         title={t("uptimeKuma.title", { defaultValue: "Service status" })}
+        revealDelay={revealDelay}
       />
     );
   }
 
   if (!data) {
     return (
-      <Card data-card-blur-surface="true" role="status">
+      <Card {...getRevealProps(revealDelay)} data-card-blur-surface="true" role="status">
         <CardHeader className="flex items-center justify-between pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <CircleAlert className="h-4 w-4 text-amber-500" aria-hidden="true" />
@@ -381,6 +384,7 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
 
   return (
     <Card
+      {...getRevealProps(revealDelay)}
       data-card-blur-surface="true"
       aria-busy={isLoading || refreshStatus === "loading"}
     >

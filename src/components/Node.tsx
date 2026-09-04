@@ -15,6 +15,7 @@ import { getOSImage, getOSName } from "@/utils";
 import { formatBytes } from "@/utils/unitHelper";
 import { useTheme } from "@/contexts/ThemeContext";
 import { type PingHistoryPoint, type PingStats, usePingStats } from "@/hooks/usePingStats";
+import { getRevealProps } from "@/lib/reveal";
 
 import Flag from "./Flag";
 import PriceTags from "./PriceTags";
@@ -240,9 +241,16 @@ interface NodeProps {
   live: Record | undefined;
   online: boolean;
   pingStatsEnabled?: boolean;
+  revealDelay?: number;
 }
 
-const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
+const Node = ({
+  basic,
+  live,
+  online,
+  pingStatsEnabled = false,
+  revealDelay = 0,
+}: NodeProps) => {
   const [t] = useTranslation();
   const { guestDisplay, themeConfig } = useTheme();
   const pingStats = usePingStats(basic.uuid, 24, pingStatsEnabled);
@@ -326,6 +334,7 @@ const Node = ({ basic, live, online, pingStatsEnabled = false }: NodeProps) => {
 
   return (
     <Card
+      {...getRevealProps(revealDelay)}
       id={basic.uuid}
       className={cardStyles[themeConfig.cardLayout] || cardStyles.classic}
     >
@@ -762,6 +771,7 @@ export default Node;
 type NodeGridProps = {
   nodes: NodeBasicInfo[];
   liveData: LiveData;
+  revealDelay?: number;
 };
 
 type QueuedPingStatsRow = {
@@ -774,7 +784,7 @@ const NODE_GRID_GAP = 24;
 const PING_STATS_ROW_LOAD_DELAY_MS = 400;
 const PING_STATS_ROW_ROOT_MARGIN = "360px 0px";
 
-export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
+export const NodeGrid = ({ nodes, liveData, revealDelay = 0 }: NodeGridProps) => {
   const gridRef = React.useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = React.useState(1);
   const prefersReducedMotion = useReducedMotion();
@@ -1041,6 +1051,7 @@ export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
                 live={nodeData}
                 online={isOnline}
                 pingStatsEnabled={pingStatsActiveNodes.has(node.uuid)}
+                revealDelay={revealDelay + Math.min(index, 5) * 40}
               />
             </motion.div>
           );
