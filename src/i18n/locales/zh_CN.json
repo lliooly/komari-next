@@ -433,37 +433,6 @@
     "remainingValueCalculator": "剩余价值计算器",
     "table": "表格"
   },
-  "uptimeKuma": {
-    "title": "服务状态",
-    "summary": "{{up}} / {{total}} 个服务正常",
-    "unavailable": "暂时无法获取 Uptime Kuma 服务状态。",
-    "retry": "重试",
-    "status": {
-      "up": "正常",
-      "down": "故障",
-      "pending": "等待检测",
-      "maintenance": "维护中",
-      "unknown": "未知"
-    },
-    "monitorId": "监控项 {{id}}",
-    "ping": "延迟",
-    "uptime24h": "24 小时可用率",
-    "heartbeatHistory": "心跳历史：{{count}} 次检测",
-    "heartbeatEmpty": "暂无心跳历史",
-    "lastHeartbeat": "{{value}}前",
-    "unknownTime": "时间未知",
-    "checkedAt": "最近检查：{{value}}",
-    "stale": "刷新失败，当前显示上一次成功结果。",
-    "overall": {
-      "up": "全部正常",
-      "degraded": "部分服务需要关注",
-      "empty": "暂无服务"
-    },
-    "unavailableValue": "—",
-    "empty": "暂无公开服务。",
-    "open": "打开状态页",
-    "refresh": "刷新服务状态"
-  },
   "nodes": {
     "empty": "暂无服务器数据",
     "loading": "正在加载节点..."
@@ -952,6 +921,37 @@
     "second": "秒"
   },
   "traffic_overview": "流量概览",
+  "uptimeKuma": {
+    "checkedAt": "最近检查：{{value}}",
+    "empty": "暂无公开服务。",
+    "heartbeatEmpty": "暂无心跳历史",
+    "heartbeatHistory": "心跳历史：{{count}} 次检测",
+    "lastHeartbeat": "{{value}}前",
+    "monitorId": "监控项 {{id}}",
+    "open": "打开状态页",
+    "overall": {
+      "degraded": "部分服务需要关注",
+      "empty": "暂无服务",
+      "up": "全部正常"
+    },
+    "ping": "延迟",
+    "refresh": "刷新服务状态",
+    "retry": "重试",
+    "stale": "刷新失败，当前显示上一次成功结果。",
+    "status": {
+      "down": "故障",
+      "maintenance": "维护中",
+      "pending": "等待检测",
+      "unknown": "未知",
+      "up": "正常"
+    },
+    "summary": "{{up}} / {{total}} 个服务正常",
+    "title": "服务状态",
+    "unavailable": "暂时无法获取 Uptime Kuma 服务状态。",
+    "unavailableValue": "—",
+    "unknownTime": "时间未知",
+    "uptime24h": "24 小时可用率"
+  },
   "view": {
     "mode": "显示模式"
   },
