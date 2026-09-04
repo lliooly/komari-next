@@ -297,9 +297,10 @@ export default function DashboardContent() {
           <AnimatePresence initial={false} mode="popLayout">
             {statusCards
               .filter((card) => card.visible)
-              .map((card) => (
+              .map((card, index) => (
                 <motion.div
                   key={card.key}
+                  className="h-full"
                   layout="position"
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -312,6 +313,7 @@ export default function DashboardContent() {
                     icon={card.icon}
                     layout={themeConfig.cardLayout}
                     structuredValue={card.structuredValue}
+                    revealDelay={index * 60}
                   />
                 </motion.div>
               ))}
@@ -346,6 +348,7 @@ type TopCardProps = {
   icon?: React.ReactNode;
   layout?: 'classic' | 'modern' | 'minimal' | 'detailed' | 'compact';
   structuredValue?: boolean;
+  revealDelay?: number;
 };
 
 const TopCard: React.FC<TopCardProps> = ({
@@ -355,13 +358,21 @@ const TopCard: React.FC<TopCardProps> = ({
   icon,
   layout = 'classic',
   structuredValue = false,
+  revealDelay = 0,
 }) => {
   const mobileStructuredValueClass = "h-6 w-[5.75rem] shrink-0 overflow-hidden";
+  const revealStyle = {
+    "--reveal-delay": `${revealDelay}ms`,
+  } as React.CSSProperties;
+  const revealProps = {
+    "data-reveal": "true",
+    style: revealStyle,
+  };
 
   // Classic layout: Traditional card with icon on right
   if (layout === 'classic') {
     return (
-      <Card className="overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
+      <Card {...revealProps} className="h-full overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
         {/* Mobile: single line layout */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -400,7 +411,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Modern layout: Horizontal with icon on left
   if (layout === 'modern') {
     return (
-      <Card className="h-full overflow-hidden shadow-sm bg-gradient-to-br from-card to-card/50 hover:shadow-md transition-all duration-200">
+      <Card {...revealProps} className="h-full overflow-hidden shadow-sm bg-gradient-to-br from-card to-card/50 hover:shadow-md transition-all duration-200">
         {/* Mobile: compact single line */}
         <CardContent className="p-3 md:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -443,7 +454,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Minimal layout: Borderless, clean design
   if (layout === 'minimal') {
     return (
-      <div data-card-blur-surface="true" className="relative rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/50 hover:to-muted/30 transition-all duration-200 backdrop-blur-sm">
+      <div {...revealProps} data-card-blur-surface="true" className="relative h-full rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/50 hover:to-muted/30 transition-all duration-200 backdrop-blur-sm">
         {/* Mobile: compact single line */}
         <div className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -482,7 +493,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Detailed layout: Icon on top, centered
   if (layout === 'detailed') {
     return (
-      <Card className="overflow-hidden shadow-md bg-card hover:shadow-xl transition-all duration-200">
+      <Card {...revealProps} className="h-full overflow-hidden shadow-md bg-card hover:shadow-xl transition-all duration-200">
         {/* Mobile: compact single line */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
@@ -525,7 +536,7 @@ const TopCard: React.FC<TopCardProps> = ({
   // Compact layout: Same visual as classic, fully independent
   if (layout === 'compact') {
     return (
-      <Card className="overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
+      <Card {...revealProps} className="h-full overflow-hidden shadow-sm bg-card hover:shadow-md transition-shadow duration-200">
         {/* Mobile: single line layout */}
         <CardContent className="p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">

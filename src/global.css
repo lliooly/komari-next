@@ -47,6 +47,11 @@
   animation: status-indicator-change 320ms ease-out both;
 }
 
+[data-reveal="true"] {
+  animation: dashboard-card-reveal 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
 @keyframes action-feedback-icon-spin {
   to {
     transform: rotate(360deg);
@@ -136,6 +141,17 @@
   }
 }
 
+@keyframes dashboard-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .action-feedback-icon__item--loading,
   .action-feedback-icon__item--success,
@@ -154,6 +170,7 @@
   .telemetry-value__content,
   .node-status-badge-transition,
   .status-indicator-change,
+  [data-reveal="true"],
   .telemetry-progress-indicator,
   .adaptive-chart__arc,
   .usage-bar__arc,
@@ -161,6 +178,11 @@
   .usage-bar__segment {
     animation: none;
     transition: none !important;
+  }
+
+  [data-reveal="true"] {
+    opacity: 1;
+    transform: none;
   }
 }
 
