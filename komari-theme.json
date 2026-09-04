@@ -4,7 +4,7 @@
     "description": "NextJS theme for Komari Monitor",
     "version": "1.4.19",
     "author": "tonyliuzj",
-    "url": "https://github.com/tonyliuzj/komari-next",
+    "url": "https://github.com/lliooly/komari-next",
     "preview": "preview.png",
     "configuration": {
         "name": "Theme Settings",

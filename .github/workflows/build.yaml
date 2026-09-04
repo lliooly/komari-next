@@ -1,14 +1,22 @@
-name: Build and Release Assets
+name: Build and Release Theme
 
 on:
-  release:
-    types: [created] # 仅在创建新的 Release 时触发
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: komari-theme-release-main
+  cancel-in-progress: true
 
 jobs:
-  build_and_upload: # 合并了构建和上传的作业
+  build-and-release:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
-    permissions: # 需要权限来写入 Release 附件
-      contents: write # 或者 specific permissions like `release: write` if more granular control is needed. For `actions/upload-release-asset` this is often sufficient.
 
     steps:
       - name: Checkout repository
@@ -17,31 +25,112 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --no-audit --no-fund
 
-      - name: Build project
+      - name: Build static theme
         run: npm run build
-        
-      - name: Archive build artifacts
-        run: |
-          mkdir -p theme-package
-          cp preview.png theme-package/
-          cp komari-theme.json theme-package/
-          cp -r dist theme-package/
-          cd theme-package
-          zip -r ../dist-release.zip .
-          cd ..
-        # 创建包含 komari-theme.json 和 dist 文件夹的主题包
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+      - name: Prepare release metadata
+        id: metadata
+        shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }} # 获取上传到 Release 的 URL
-          asset_path: ./dist-release.zip # 要上传的文件的路径
-          asset_name: dist-release.zip # 在 Release 中显示的文件名
-          asset_content_type: application/zip # 文件类型
+          REPOSITORY: ${{ github.repository }}
+          SERVER_URL: ${{ github.server_url }}
+          RUN_NUMBER: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          source_version="$(jq -r '.version // empty' komari-theme.json)"
+          if [[ "$source_version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            major="${BASH_REMATCH[1]}"
+            minor="${BASH_REMATCH[2]}"
+            source_patch="${BASH_REMATCH[3]}"
+          else
+            echo "::error::komari-theme.json version must be MAJOR.MINOR.PATCH; got: $source_version"
+            exit 1
+          fi
+
+          patch=$((10#$source_patch + 10#$RUN_NUMBER))
+          short_sha="${COMMIT_SHA:0:7}"
+          version="${major}.${minor}.${patch}-dev.${short_sha}"
+          repository_url="${SERVER_URL}/${REPOSITORY}"
+          tag="v${version}"
+
+          jq \
+            --arg version "$version" \
+            --arg url "$repository_url" \
+            '.version = $version | .url = $url' \
+            komari-theme.json > komari-theme.generated.json
+          mv komari-theme.generated.json komari-theme.json
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "repository_url=$repository_url" >> "$GITHUB_OUTPUT"
+
+      - name: Verify theme files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f preview.png
+          test -f komari-theme.json
+          test -d dist
+          jq empty komari-theme.json
+          test "$(jq -r '.short' komari-theme.json)" = "next"
+          test "$(jq -r '.url' komari-theme.json)" = "${{ steps.metadata.outputs.repository_url }}"
+
+      - name: Create Komari theme package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf theme-package dist-release.zip
+          mkdir -p theme-package
+          cp preview.png komari-theme.json theme-package/
+          cp -R dist theme-package/
+
+          (
+            cd theme-package
+            zip -qr ../dist-release.zip .
+          )
+
+          unzip -tq dist-release.zip
+          unzip -Z1 dist-release.zip | grep -Fxq "komari-theme.json"
+          unzip -Z1 dist-release.zip | grep -Fxq "preview.png"
+          unzip -Z1 dist-release.zip | grep -q '^dist/'
+
+      - name: Publish latest GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+          RELEASE_TAG: ${{ steps.metadata.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          notes="Automated Komari theme build for commit ${COMMIT_SHA}."
+
+          if gh release view "$RELEASE_TAG" --repo "$REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist-release.zip \
+              --repo "$REPOSITORY" \
+              --clobber
+            gh release edit "$RELEASE_TAG" \
+              --repo "$REPOSITORY" \
+              --title "Komari Next ${RELEASE_VERSION}" \
+              --notes "$notes" \
+              --latest
+          else
+            gh release create "$RELEASE_TAG" dist-release.zip \
+              --repo "$REPOSITORY" \
+              --target "$COMMIT_SHA" \
+              --title "Komari Next ${RELEASE_VERSION}" \
+              --notes "$notes" \
+              --latest
+          fi
