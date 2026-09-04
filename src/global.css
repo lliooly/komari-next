@@ -17,6 +17,16 @@
   animation: action-feedback-icon-error 360ms ease-out both;
 }
 
+.semantic-icon-transition {
+  transform-origin: center;
+  animation: semantic-icon-enter 180ms ease-out both;
+}
+
+.semantic-icon-chevron {
+  transform-origin: center;
+  transition: transform 200ms ease-out;
+}
+
 @keyframes action-feedback-icon-spin {
   to {
     transform: rotate(360deg);
@@ -58,11 +68,30 @@
   }
 }
 
+@keyframes semantic-icon-enter {
+  from {
+    opacity: 0.45;
+    transform: scale(0.84);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .action-feedback-icon__item--loading,
   .action-feedback-icon__item--success,
   .action-feedback-icon__item--error {
     animation: none;
+  }
+
+  .semantic-icon-transition {
+    animation: none;
+  }
+
+  .semantic-icon-chevron {
+    transition: none;
   }
 }
 

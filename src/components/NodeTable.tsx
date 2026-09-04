@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Flex } from "@/components/ui/flex";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowUpDown, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import type { NodeBasicInfo } from "@/contexts/NodeListContext";
 import type { LiveData, Record } from "../types/LiveData";
 import {
@@ -83,8 +83,31 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
   };
 
   const getSortIcon = (field: SortField) => {
-    if (sortState.field !== field) return <div className="hidden" />; // Placeholder to prevent layout shift
-    return sortState.order === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
+    const isActive = sortState.field === field && sortState.order !== "default";
+    const SortIcon = isActive
+      ? sortState.order === "asc"
+        ? ChevronUp
+        : ChevronDown
+      : ArrowUpDown;
+
+    return (
+      <SortIcon
+        key={`${field}-${isActive ? sortState.order : "default"}`}
+        size={14}
+        aria-hidden="true"
+        className={cn(
+          "semantic-icon-transition shrink-0",
+          isActive && "text-primary"
+        )}
+      />
+    );
+  };
+
+  const getSortAria = (field: SortField): "ascending" | "descending" | "none" => {
+    if (sortState.field !== field || sortState.order === "default") {
+      return "none";
+    }
+    return sortState.order === "asc" ? "ascending" : "descending";
   };
 
   const onlineNodes = liveData && liveData.online ? liveData.online : [];
@@ -130,16 +153,18 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
       case 'cpu':
         comparison = aData.cpu.usage - bData.cpu.usage;
         break;
-      case 'ram':
+      case 'ram': {
         const aRamPercent = a.mem_total ? (aData.ram.used / a.mem_total) * 100 : 0;
         const bRamPercent = b.mem_total ? (bData.ram.used / b.mem_total) * 100 : 0;
         comparison = aRamPercent - bRamPercent;
         break;
-      case 'disk':
+      }
+      case 'disk': {
         const aDiskPercent = a.disk_total ? (aData.disk.used / a.disk_total) * 100 : 0;
         const bDiskPercent = b.disk_total ? (bData.disk.used / b.disk_total) * 100 : 0;
         comparison = aDiskPercent - bDiskPercent;
         break;
+      }
       case 'price':
         comparison = a.price - b.price;
         break;
@@ -178,6 +203,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[264px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('name')}
+                aria-sort={getSortAria("name")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -188,6 +214,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[90px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('os')}
+                aria-sort={getSortAria("os")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -198,6 +225,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[120px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('status')}
+                aria-sort={getSortAria("status")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -208,6 +236,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[80px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('cpu')}
+                aria-sort={getSortAria("cpu")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -218,6 +247,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[80px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('ram')}
+                aria-sort={getSortAria("ram")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -228,6 +258,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[80px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('disk')}
+                aria-sort={getSortAria("disk")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -242,6 +273,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                     showPrice && "cursor-pointer hover:bg-muted/50"
                   )}
                   onClick={showPrice ? handleSort('price') : undefined}
+                  aria-sort={showPrice ? getSortAria("price") : "none"}
                   title={showPrice ? t("nodeCard.sortTooltip") : undefined}
                 >
                   <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -253,6 +285,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[140px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('networkUp')}
+                aria-sort={getSortAria("networkUp")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -263,6 +296,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
               <TableHead
                 className="w-[200px] cursor-pointer hover:bg-muted/50 transition-colors text-center px-2"
                 onClick={handleSort('totalUp')}
+                aria-sort={getSortAria("totalUp")}
                 title={t("nodeCard.sortTooltip")}
               >
                 <Flex align="center" gap="1" justify="center" className="whitespace-nowrap">
@@ -318,7 +352,14 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                         "h-6 w-6 transition-transform duration-200",
                         isExpanded && "rotate-90"
                       )}
-                      aria-label="Expand row"
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-controls={`node-details-${node.uuid}`}
+                      aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        toggleRowExpansion(node.uuid);
+                      }}
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -466,7 +507,10 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                 </TableRow>
 
                 {isExpanded && (
-                  <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableRow
+                    id={`node-details-${node.uuid}`}
+                    className="bg-muted/30 hover:bg-muted/30"
+                  >
                     <TableCell colSpan={tableColumnCount} className="max-w-0 p-0">
                       <div className="w-full max-w-full overflow-hidden px-4 py-6 md:px-8 md:py-8">
                         <ExpandedNodeDetails node={node} nodeData={nodeData} />

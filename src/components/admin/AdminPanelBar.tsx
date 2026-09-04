@@ -1,4 +1,4 @@
-import { Cross1Icon, ExitIcon } from "@radix-ui/react-icons";
+import { Cross1Icon } from "@radix-ui/react-icons";
 import { Button, Callout, Flex, Grid, IconButton, Text } from "@radix-ui/themes";
 import { AnimatePresence, motion } from "framer-motion"; // 引入 Framer Motion
 import { useEffect, useState, type ReactNode } from "react";
@@ -15,8 +15,10 @@ import LoginDialog from "../Login";
 import { useAccount } from "@/contexts/AccountContext";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Tips from "../ui/tips";
-import { CircleFadingArrowUp } from "lucide-react";
+import { CircleFadingArrowUp, LogOut } from "lucide-react";
 import { useRPC2Call } from "@/contexts/RPC2Context";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 
 // 将JSON配置转换为类型安全的菜单项数组 (基础静态菜单)
 const baseMenuItems = (menuConfig as { menu: MenuItem[] }).menu;
@@ -42,6 +44,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
   const [t] = useTranslation();
   const location = useLocation();
   const { publicInfo } = usePublicInfo();
+  const { status: logoutStatus, run: runLogout } = useActionFeedback();
   //const navigate = useNavigate();
   // 获取版本信息
   const [versionInfo, setVersionInfo] = useState<{
@@ -257,7 +260,14 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
   };
 
   function logout() {
-    window.open("/api/logout", "_self");
+    void runLogout(async () => {
+      try {
+        return window.open("/api/logout", "_self") !== null;
+      } catch (error) {
+        console.error("Failed to log out:", error);
+        return false;
+      }
+    });
   }
   return (
     <>
@@ -287,6 +297,9 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
             <Flex gap="3" align="center">
               <IconButton
                 variant="ghost"
+                type="button"
+                aria-label={t("open_sidebar", "打开侧边栏")}
+                aria-expanded={sidebarOpen}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 style={{
                   display: isMobile && sidebarOpen ? "none" : "flex",
@@ -370,8 +383,16 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                 />
               )}
               <LanguageSwitch />
-              <IconButton variant="soft" color="orange" onClick={logout}>
-                <ExitIcon />
+              <IconButton
+                variant="soft"
+                color="orange"
+                type="button"
+                aria-label={t("logout", "退出登录")}
+                aria-busy={logoutStatus === "loading"}
+                disabled={logoutStatus === "loading"}
+                onClick={logout}
+              >
+                <ActionFeedbackIcon status={logoutStatus} icon={LogOut} />
               </IconButton>
             </Flex>
           </Flex>
@@ -410,7 +431,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                 }}
                 onClick={() => setSidebarOpen(false)}
               >
-                <Cross1Icon />
+                <Cross1Icon className="semantic-icon-transition" />
               </IconButton>
               {/* 侧边连链接 */}
               <Flex
@@ -526,6 +547,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                           </Text>
 
                           <ChevronDownIcon
+                            className="semantic-icon-chevron"
                             style={{
                               transform: isOpen
                                 ? "rotate(180deg)"

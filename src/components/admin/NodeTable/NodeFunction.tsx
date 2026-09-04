@@ -17,11 +17,18 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { toast } from "sonner";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 
-async function removeClient(uuid: string) {
-  await fetch(`/api/admin/client/${uuid}/remove`, {
-    method: "POST",
-  });
+async function removeClient(uuid: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/admin/client/${uuid}/remove`, {
+      method: "POST",
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 type InstallOptions = {
@@ -37,7 +44,8 @@ type Platform = "linux" | "windows" | "macos";
 
 export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
   const refreshTable = React.useContext(DataTableRefreshContext);
-  const [removing, setRemoving] = React.useState(false);
+  const { status: copyStatus, run: runCopy } = useActionFeedback();
+  const { status: removeStatus, run: runRemove } = useActionFeedback();
   const [selectedPlatform, setSelectedPlatform] =
     React.useState<Platform>("linux");
   const [installOptions, setInstallOptions] = React.useState<InstallOptions>({
@@ -106,12 +114,15 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
     return finalCommand;
   };
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success(t("copy_success", "已复制到剪贴板"));
+      return true;
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      toast.error(t("copy_failed", "复制失败"));
+      return false;
     }
   };
 
@@ -275,9 +286,13 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
             <Flex justify="center">
               <Button
                 style={{ width: "100%" }}
-                onClick={() => copyToClipboard(generateCommand())}
+                aria-busy={copyStatus === "loading"}
+                disabled={copyStatus === "loading"}
+                onClick={() =>
+                  void runCopy(() => copyToClipboard(generateCommand()))
+                }
               >
-                <Copy size={16} />
+                <ActionFeedbackIcon status={copyStatus} icon={Copy} />
                 {t("copy")}
               </Button>
             </Flex>
@@ -308,8 +323,14 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
       {/** Delete Button */}
       <Dialog.Root>
         <Dialog.Trigger>
-          <IconButton variant="ghost" color="red" className="text-destructive">
-            <Trash2 className="p-1" />
+          <IconButton
+            variant="ghost"
+            color="red"
+            className="text-destructive"
+            aria-busy={removeStatus === "loading"}
+            disabled={removeStatus === "loading"}
+          >
+            <ActionFeedbackIcon status={removeStatus} icon={Trash2} />
           </IconButton>
         </Dialog.Trigger>
         <Dialog.Content>
@@ -323,16 +344,25 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
             </Dialog.Close>
             <Dialog.Trigger>
               <Button
-                disabled={removing}
+                disabled={removeStatus === "loading"}
+                aria-busy={removeStatus === "loading"}
                 color="red"
-                onClick={async () => {
-                  setRemoving(true);
-                  await removeClient(row.original.uuid);
-                  setRemoving(false);
-                  if (refreshTable) refreshTable();
-                }}
+                onClick={() =>
+                  void runRemove(async () => {
+                    const succeeded = await removeClient(row.original.uuid);
+                    if (succeeded) {
+                      refreshTable?.();
+                    } else {
+                      toast.error(
+                        t("admin.nodeTable.errorDeleteNode", "删除节点失败")
+                      );
+                    }
+                    return succeeded;
+                  })
+                }
               >
-                {removing
+                <ActionFeedbackIcon status={removeStatus} icon={Trash2} />
+                {removeStatus === "loading"
                   ? t("admin.nodeTable.deleting")
                   : t("admin.nodeTable.confirm")}
               </Button>
@@ -343,4 +373,3 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
     </div>
   );
 }
-

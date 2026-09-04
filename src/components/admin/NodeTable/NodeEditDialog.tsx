@@ -5,10 +5,13 @@ import {
   type ClientFormData,
 } from "@/components/admin/NodeTable/schema/node";
 import { DataTableRefreshContext } from "@/components/admin/NodeTable/schema/DataTableRefreshContext";
-import { Pencil } from "lucide-react";
+import { Pencil, Save } from "lucide-react";
 import { t } from "i18next";
 import { toast } from "sonner";
 import { Button, Dialog, Flex, IconButton, TextField } from "@radix-ui/themes";
+
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 
 export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
   const [form, setForm] = React.useState<ClientFormData & { weight: number }>({
@@ -18,41 +21,57 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
     public_remark: item.public_remark || "", // 从 item 初始化 public_remark
     weight: item.weight || 0,
   });
-  const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const { status: saveStatus, run: runSave } = useActionFeedback();
 
   const refreshTable = React.useContext(DataTableRefreshContext);
 
-  function saveClientData(
+  async function saveClientData(
     uuid: string,
-    formData: ClientFormData,
-    setLoadingCallback: (b: boolean) => void,
-    onSuccess?: () => void
-  ) {
-    setLoadingCallback(true);
-    fetch(`/api/admin/client/${uuid}/edit`, {
-      method: "POST",
-      body: JSON.stringify(formData),
-    })
-      .then(async (res) => {
-        if (onSuccess) onSuccess();
-        if (res.status === 200) {
-          if (refreshTable) refreshTable();
-          toast.success(t("admin.nodeEdit.saveSuccess", "保存成功"));
-        } else {
-          toast.error(t("admin.nodeEdit.saveError", "保存失败"));
-        }
-      })
-      .catch(() => {
+    formData: ClientFormData
+  ): Promise<boolean> {
+    try {
+      const response = await fetch(`/api/admin/client/${uuid}/edit`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
         toast.error(t("admin.nodeEdit.saveError", "保存失败"));
-      })
-      .finally(() => setLoadingCallback(false));
+        return false;
+      }
+
+      refreshTable?.();
+      toast.success(t("admin.nodeEdit.saveSuccess", "保存成功"));
+      return true;
+    } catch {
+      toast.error(t("admin.nodeEdit.saveError", "保存失败"));
+      return false;
+    }
+  }
+
+  const handleSave = async () => {
+    const payload: ClientFormData = {
+      name: form.name,
+      token: form.token,
+      remark: form.remark,
+      public_remark: form.public_remark,
+    };
+
+    const succeeded = await runSave(() => saveClientData(item.uuid, payload));
+    if (succeeded) {
+      setOpen(false);
+    }
   }
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <IconButton variant="ghost">
-          <Pencil className="p-1" />
+        <IconButton
+          variant="ghost"
+          aria-busy={saveStatus === "loading"}
+          disabled={saveStatus === "loading"}
+        >
+          <ActionFeedbackIcon status={saveStatus} icon={Pencil} />
         </IconButton>
       </Dialog.Trigger>
       <Dialog.Content>
@@ -66,7 +85,7 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder={t("admin.nodeEdit.namePlaceholder", "请输入名称")}
-              disabled={loading}
+              disabled={saveStatus === "loading"}
             />
           </div>
           <div>
@@ -79,7 +98,7 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
                 setForm((f) => ({ ...f, token: e.target.value }))
               }
               placeholder={t("admin.nodeEdit.tokenPlaceholder", "请输入 Token")}
-              disabled={loading}
+              disabled={saveStatus === "loading"}
               readOnly
               className="bg-gray-200"
             />
@@ -97,7 +116,7 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
                 "admin.nodeEdit.remarkPlaceholder",
                 "请输入私有备注"
               )}
-              disabled={loading}
+              disabled={saveStatus === "loading"}
             />
           </div>
           <div>
@@ -113,7 +132,7 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
                 "admin.nodeEdit.publicRemarkPlaceholder",
                 "请输入公开备注"
               )}
-              disabled={loading}
+              disabled={saveStatus === "loading"}
             />
           </div>
         </div>
@@ -121,20 +140,12 @@ export function EditDialog({ item }: { item: z.infer<typeof schema> }) {
           <Button
             type="submit"
             className="w-full"
-            onClick={() => {
-              const payload: ClientFormData = {
-                name: form.name,
-                token: form.token,
-                remark: form.remark,
-                public_remark: form.public_remark,
-              };
-              saveClientData(item.uuid, payload, setLoading, () =>
-                setOpen(false)
-              );
-            }}
-            disabled={loading}
+            onClick={() => void handleSave()}
+            disabled={saveStatus === "loading"}
+            aria-busy={saveStatus === "loading"}
           >
-            {loading
+            <ActionFeedbackIcon status={saveStatus} icon={Save} />
+            {saveStatus === "loading"
               ? t("admin.nodeEdit.waiting", "等待...")
               : t("admin.nodeEdit.save", "保存")}
           </Button>

@@ -9,8 +9,18 @@ import {
 } from "@radix-ui/themes";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Power, Save } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion"; // 引入 Framer Motion
+
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
+import { cn } from "@/lib/utils";
+
+function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
+  return (
+    (typeof value === "object" && value !== null) || typeof value === "function"
+  ) && typeof (value as { then?: unknown }).then === "function";
+}
 
 interface SettingCardProps {
   title?: string | React.ReactNode;
@@ -95,35 +105,56 @@ export function SettingCardSwitch({
   label?: string;
   autoDisabled?: boolean;
   defaultChecked?: boolean;
-  onChange?: (checked: boolean, switchElement: HTMLButtonElement) => void;
+  onChange?: (
+    checked: boolean,
+    switchElement: HTMLButtonElement
+  ) => void | boolean | Promise<unknown>;
 }) {
   const switchRef = React.useRef<HTMLButtonElement>(null);
-  const [disabled, setDisabled] = React.useState(false);
-  const [checked, setChecked] = React.useState(defaultChecked || false);
-  const handleChange = (c: boolean) => {
-    if (autoDisabled) setDisabled(true);
+  const [checked, setChecked] = React.useState(defaultChecked ?? false);
+  const { status: switchStatus, run: runSwitch } = useActionFeedback();
+
+  const handleChange = (nextChecked: boolean) => {
+    if (switchStatus === "loading") return;
+
     const previousValue = checked;
-    setChecked(c);
-    const result: any =
-      onChange && switchRef.current
-        ? onChange(c, switchRef.current)
-        : undefined;
-    if (autoDisabled) {
-      const promise: Promise<any> = result;
-      if (promise && typeof promise.then === "function") {
-        promise
-          .then(() => { })
-          .catch(() => {
+    setChecked(nextChecked);
+    const switchElement = switchRef.current;
+    if (!switchElement) {
+      setChecked(previousValue);
+      return;
+    }
+
+    let result: void | boolean | Promise<unknown>;
+    try {
+      result = onChange?.(nextChecked, switchElement);
+    } catch {
+      setChecked(previousValue);
+      return;
+    }
+
+    if (result === false) {
+      setChecked(previousValue);
+      return;
+    }
+
+    if (isPromiseLike(result)) {
+      void runSwitch(async () => {
+        try {
+          const resolvedResult = await result;
+          if (resolvedResult === false) {
             setChecked(previousValue);
-          })
-          .finally(() => {
-            setDisabled(false);
-          });
-      } else {
-        setDisabled(false);
-      }
+            return false;
+          }
+          return true;
+        } catch {
+          setChecked(previousValue);
+          return false;
+        }
+      });
     }
   };
+
   return (
     <SettingCard {...props} direction="column">
       <SettingCard.Action>
@@ -133,7 +164,13 @@ export function SettingCardSwitch({
             ref={switchRef}
             checked={checked}
             onCheckedChange={handleChange}
-            disabled={disabled}
+            disabled={autoDisabled && switchStatus === "loading"}
+            aria-busy={switchStatus === "loading"}
+          />
+          <ActionFeedbackIcon
+            status={switchStatus}
+            icon={Power}
+            className={switchStatus === "idle" ? "opacity-0" : ""}
           />
         </Flex>
       </SettingCard.Action>
@@ -147,26 +184,22 @@ export function SettingCardButton({
   children,
   onClick,
   autoDisabled = true,
+  feedbackIcon: FeedbackIcon = Save,
   ...props
 }: SettingCardProps & {
   label?: string;
   variant?: "solid" | "soft" | "outline" | "ghost";
   children?: React.ReactNode;
-  onClick?: (buttonElement: HTMLButtonElement) => void;
+  onClick?: (buttonElement: HTMLButtonElement) => void | Promise<unknown>;
   autoDisabled?: boolean;
+  feedbackIcon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }) {
-  const [disabled, setDisabled] = React.useState(false);
+  const { status, run } = useActionFeedback();
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (autoDisabled) setDisabled(true);
-    const result: any = onClick ? onClick(event.currentTarget) : undefined;
-    if (autoDisabled) {
-      const promise: Promise<any> = result;
-      if (promise && typeof promise.then === "function") {
-        promise.finally(() => setDisabled(false));
-      } else {
-        setDisabled(false);
-      }
-    }
+    void run(async () => {
+      const result = await onClick?.(event.currentTarget);
+      return result !== false;
+    });
   };
   return (
     <SettingCard {...props} direction="column">
@@ -174,7 +207,14 @@ export function SettingCardButton({
         <Flex>
           <Flex direction="row" gap="2" align="center">
             <label>{label}</label>
-            <Button onClick={handleClick} variant={variant} disabled={disabled}>
+            <Button
+              type="button"
+              onClick={handleClick}
+              variant={variant}
+              disabled={autoDisabled && status === "loading"}
+              aria-busy={status === "loading"}
+            >
+              <ActionFeedbackIcon status={status} icon={FeedbackIcon} />
               {children}
             </Button>
           </Flex>
@@ -249,7 +289,7 @@ interface SettingCardShortTextInputProps
     value: string,
     inputElement: HTMLInputElement,
     buttonElement: HTMLButtonElement
-  ) => void;
+  ) => void | Promise<unknown>;
 
   // 额外内容
   children?: React.ReactNode | null;
@@ -267,7 +307,7 @@ export function SettingCardShortTextInput({
 
   // 按钮属性
   showSaveButton = true,
-  label = useTranslation().t("save"),
+  label,
   autoDisabled = true,
   isSaving,
 
@@ -299,8 +339,11 @@ export function SettingCardShortTextInput({
   className = "w-full",
   ...restProps
 }: SettingCardShortTextInputProps) {
-  const [internalDisabled, setInternalDisabled] = React.useState(false);
-  const savingState = isSaving !== undefined ? isSaving : internalDisabled;
+  const { t } = useTranslation();
+  const saveLabel = label ?? t("save");
+  const { status: saveStatus, run: runSave } = useActionFeedback();
+  const savingState =
+    isSaving !== undefined ? isSaving : autoDisabled && saveStatus === "loading";
   const [internalValue, setInternalValue] = React.useState(value || defaultValue || "");
   const currentValue = value !== undefined ? value : internalValue;
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -314,20 +357,12 @@ export function SettingCardShortTextInput({
   }, [value]);
 
   const handleSave = () => {
-    if (isSaving === undefined && autoDisabled) setInternalDisabled(true);
     const valueToSave = currentValue?.toString() || "";
-    const result: any =
-      inputRef.current && buttonRef.current
-        ? OnSave(valueToSave, inputRef.current, buttonRef.current)
-        : undefined;
-    if (autoDisabled) {
-      const promise: Promise<any> = result;
-      if (promise && typeof promise.then === "function") {
-        promise.finally(() => isSaving === undefined && setInternalDisabled(false));
-      } else {
-        isSaving === undefined && setInternalDisabled(false);
-      }
-    }
+    void runSave(async () => {
+      if (!inputRef.current || !buttonRef.current) return false;
+      const result = await OnSave(valueToSave, inputRef.current, buttonRef.current);
+      return result !== false;
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -380,13 +415,16 @@ export function SettingCardShortTextInput({
         </TextField.Root>
         {children}
         <Button
+          type="button"
           ref={buttonRef}
           onClick={handleSave}
           variant="solid"
           hidden={!showSaveButton}
           disabled={savingState}
+          aria-busy={saveStatus === "loading"}
         >
-          {label}
+          <ActionFeedbackIcon status={saveStatus} icon={Save} />
+          {saveLabel}
         </Button>
       </Flex>
     </SettingCard>
@@ -396,7 +434,7 @@ export function SettingCardShortTextInput({
 export function SettingCardLongTextInput({
   title = "",
   description = "",
-  label = useTranslation().t("save"),
+  label,
   defaultValue = "",
   OnSave = () => { },
   onChange,
@@ -413,33 +451,28 @@ export function SettingCardLongTextInput({
     value: string,
     textAreaElement: HTMLTextAreaElement,
     buttonElement: HTMLButtonElement
-  ) => void;
+  ) => void | Promise<unknown>;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   autoDisabled?: boolean;
   isSaving?: boolean;
   bordless?: boolean;
   showSaveButton?: boolean;
 }) {
-  const [disabled, setDisabled] = React.useState(false);
-  const savingState = isSaving !== undefined ? isSaving : disabled;
+  const { t } = useTranslation();
+  const saveLabel = label ?? t("save");
+  const { status: saveStatus, run: runSave } = useActionFeedback();
+  const savingState =
+    isSaving !== undefined ? isSaving : autoDisabled && saveStatus === "loading";
   const [value, setValue] = React.useState(defaultValue);
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleSave = () => {
-    if (isSaving === undefined && autoDisabled) setDisabled(true);
-    const result: any =
-      textAreaRef.current && buttonRef.current
-        ? OnSave(value, textAreaRef.current, buttonRef.current)
-        : undefined;
-    if (autoDisabled) {
-      const promise: Promise<any> = result;
-      if (promise && typeof promise.then === "function") {
-        promise.finally(() => isSaving === undefined && setDisabled(false));
-      } else {
-        isSaving === undefined && setDisabled(false);
-      }
-    }
+    void runSave(async () => {
+      if (!textAreaRef.current || !buttonRef.current) return false;
+      const result = await OnSave(value, textAreaRef.current, buttonRef.current);
+      return result !== false;
+    });
   };
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -461,12 +494,15 @@ export function SettingCardLongTextInput({
         />
         {showSaveButton && (
           <Button
+            type="button"
             ref={buttonRef}
             onClick={handleSave}
             variant="solid"
             disabled={savingState}
+            aria-busy={saveStatus === "loading"}
           >
-            {label}
+            <ActionFeedbackIcon status={saveStatus} icon={Save} />
+            {saveLabel}
           </Button>
         )}
       </Flex>
@@ -479,7 +515,7 @@ export function SettingCardSelect({
   description,
   defaultValue = "",
   value,
-  label = useTranslation().t("select"),
+  label,
   options = [],
   OnSave = () => { },
   autoDisabled = true,
@@ -492,13 +528,20 @@ export function SettingCardSelect({
   value?: string;
   label?: string;
   options?: { value: string; label?: string; disabled?: boolean }[];
-  OnSave?: (value: string, buttonElement: HTMLButtonElement) => void;
+  OnSave?: (
+    value: string,
+    buttonElement: HTMLButtonElement
+  ) => void | boolean | Promise<unknown>;
   autoDisabled?: boolean;
   isSaving?: boolean;
   bordless?: boolean;
 }) {
-  const [disabled, setDisabled] = React.useState(false);
-  const savingState = isSaving !== undefined ? isSaving : disabled;
+  const { t } = useTranslation();
+  const selectLabel = label ?? t("select");
+  const { status: selectStatus, run: runSelect } = useActionFeedback();
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const savingState =
+    isSaving !== undefined ? isSaving : autoDisabled && selectStatus === "loading";
   const [selectedValue, setSelectedValue] = React.useState(
     value !== undefined ? value : defaultValue
   );
@@ -510,31 +553,44 @@ export function SettingCardSelect({
     }
   }, [value]);
 
-  const handleSave = (value: string) => {
-    if (isSaving === undefined && autoDisabled) setDisabled(true);
-    const previousValue = selectedValue; // 保存之前的值
-    setSelectedValue(value); // 先更新选择的值
+  const handleSave = (nextValue: string) => {
+    if (selectStatus === "loading") return;
 
-    const result: any = buttonRef.current
-      ? OnSave(value, buttonRef.current)
-      : undefined;
-    if (autoDisabled) {
-      const promise: Promise<any> = result;
-      if (promise && typeof promise.then === "function") {
-        promise
-          .then(() => {
-            // 成功时不需要额外操作，值已经更新
-          })
-          .catch(() => {
-            // 错误时自动切换回之前的值
+    const previousValue = selectedValue;
+    setSelectedValue(nextValue);
+    const buttonElement = buttonRef.current;
+    if (!buttonElement) {
+      setSelectedValue(previousValue);
+      return;
+    }
+
+    let result: void | boolean | Promise<unknown>;
+    try {
+      result = OnSave(nextValue, buttonElement);
+    } catch {
+      setSelectedValue(previousValue);
+      return;
+    }
+
+    if (result === false) {
+      setSelectedValue(previousValue);
+      return;
+    }
+
+    if (isPromiseLike(result)) {
+      void runSelect(async () => {
+        try {
+          const resolvedResult = await result;
+          if (resolvedResult === false) {
             setSelectedValue(previousValue);
-          })
-          .finally(() => {
-            isSaving === undefined && setDisabled(false);
-          });
-      } else {
-        isSaving === undefined && setDisabled(false);
-      }
+            return false;
+          }
+          return true;
+        } catch {
+          setSelectedValue(previousValue);
+          return false;
+        }
+      });
     }
   };
 
@@ -546,7 +602,7 @@ export function SettingCardSelect({
       );
       return selectedOption?.label || selectedValue;
     }
-    return label;
+    return selectLabel;
   };
 
   return (
@@ -554,11 +610,24 @@ export function SettingCardSelect({
       <SettingCard.Action>
         <Flex>
           <Flex direction="row" gap="2" align="center">
-            <DropdownMenu.Root>
+            <DropdownMenu.Root onOpenChange={setMenuOpen}>
               <DropdownMenu.Trigger disabled={savingState}>
-                <Button variant="soft" ref={buttonRef}>
+                <Button
+                  type="button"
+                  variant="soft"
+                  ref={buttonRef}
+                  aria-expanded={menuOpen}
+                  aria-busy={selectStatus === "loading"}
+                >
                   {getDisplayText()}
-                  <DropdownMenu.TriggerIcon />
+                  <ActionFeedbackIcon
+                    status={selectStatus}
+                    icon={ChevronDownIcon}
+                    className={cn(
+                      "semantic-icon-chevron",
+                      menuOpen && selectStatus === "idle" && "rotate-180"
+                    )}
+                  />
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>

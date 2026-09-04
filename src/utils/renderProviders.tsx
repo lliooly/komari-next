@@ -57,7 +57,7 @@ export const renderProviderInputs = ({
                 toast.error(
                     t("settings.missing_required_fields", { fieldNames })
                 );
-                return;
+                return false;
             }
 
             // 转换数字类型字段
@@ -92,6 +92,7 @@ export const renderProviderInputs = ({
             });
 
             await handleSave(processedValues);
+            return true;
         } catch (error) {
             console.error("Validation error:", error);
             throw error;

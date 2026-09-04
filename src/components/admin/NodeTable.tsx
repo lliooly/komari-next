@@ -48,7 +48,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronDown, Columns2, Copy, PlusIcon } from "lucide-react";
+import { ChevronDown, Columns2, PlusIcon } from "lucide-react";
 
 import type { schema } from "./NodeTable/schema/node";
 import { DataTableRefreshContext } from "./NodeTable/schema/DataTableRefreshContext";
@@ -56,9 +56,10 @@ import { t } from "i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useActionFeedback } from "@/hooks/useActionFeedback";
 import { ActionsCell } from "./NodeTable/NodeFunction";
+import { CopyFeedbackButton } from "./NodeTable/CopyFeedbackButton";
 import { toast } from "sonner";
 import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
-import { Dialog, Flex, Button, IconButton, Checkbox, TextField } from "@radix-ui/themes";
+import { Dialog, Flex, Button, Checkbox, TextField } from "@radix-ui/themes";
 import Loading from "../loading";
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -112,30 +113,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           {ipv4 && (
             <div className="flex items-center gap-1">
               <span>{ipv4}</span>
-              <IconButton
-                variant="ghost"
-                onClick={() => {
-                  navigator.clipboard.writeText(ipv4);
-                  toast.success(t("copy_success"));
-                }}
-              >
-                <Copy size={16} />
-              </IconButton>
+              <CopyFeedbackButton value={ipv4} />
             </div>
           )}
           {ipv6 && (
             <div className="flex items-center gap-1">
               <span>{ipv6}</span>
-              <IconButton
-                variant="ghost"
-                className="size-5"
-                onClick={() => {
-                  navigator.clipboard.writeText(ipv6);
-                  toast.success(t("copy_success"));
-                }}
-              >
-                <Copy size={16} />
-              </IconButton>
+              <CopyFeedbackButton value={ipv6} />
             </div>
           )}
         </div>

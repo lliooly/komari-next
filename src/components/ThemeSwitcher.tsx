@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Activity, Gauge, Palette, Layout, PieChart, Image, Settings, Grid3X3, Table2 } from 'lucide-react';
+import { Activity, Check, Gauge, Palette, Layout, PieChart, Image, Settings, Grid3X3, Table2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   type StatusCardsVisibility,
@@ -224,6 +224,8 @@ const ThemeSwitcher = () => {
               {colorThemes.map((theme) => (
                 <button
                   key={theme.value}
+                  type="button"
+                  aria-pressed={themeConfig.colorTheme === theme.value}
                   onClick={() => setColorTheme(theme.value)}
                   className={`relative rounded-lg p-2 text-left transition-all ${
                     themeConfig.colorTheme === theme.value
@@ -247,6 +249,8 @@ const ThemeSwitcher = () => {
               {cardLayouts.map((layout) => (
                 <button
                   key={layout.value}
+                  type="button"
+                  aria-pressed={themeConfig.cardLayout === layout.value}
                   onClick={() => setCardLayout(layout.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.cardLayout === layout.value
@@ -259,7 +263,10 @@ const ThemeSwitcher = () => {
                     <div className="text-[10px] text-muted-foreground">{layout.description}</div>
                   </div>
                   {themeConfig.cardLayout === layout.value && (
-                    <div className="h-2 w-2 rounded-full bg-primary mt-0.5" />
+                    <div
+                      aria-hidden="true"
+                      className="semantic-icon-transition mt-0.5 h-2 w-2 rounded-full bg-primary"
+                    />
                   )}
                 </button>
               ))}
@@ -275,6 +282,8 @@ const ThemeSwitcher = () => {
               {cardDesigns.map((design) => (
                 <button
                   key={design.value}
+                  type="button"
+                  aria-pressed={themeConfig.cardDesign === design.value}
                   onClick={() => setCardDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.cardDesign === design.value
@@ -287,7 +296,10 @@ const ThemeSwitcher = () => {
                     <div className="text-[10px] text-muted-foreground">{design.description}</div>
                   </div>
                   {themeConfig.cardDesign === design.value && (
-                    <div className="h-2 w-2 rounded-full bg-primary mt-0.5" />
+                    <div
+                      aria-hidden="true"
+                      className="semantic-icon-transition mt-0.5 h-2 w-2 rounded-full bg-primary"
+                    />
                   )}
                 </button>
               ))}
@@ -320,6 +332,7 @@ const ThemeSwitcher = () => {
                         <button
                           key={type.value}
                           type="button"
+                          aria-pressed={themeConfig.cardBlurType === type.value}
                           onClick={() => setCardBlurType(type.value)}
                           className={`rounded-md p-2 text-left transition-all ${
                             themeConfig.cardBlurType === type.value
@@ -434,6 +447,8 @@ const ThemeSwitcher = () => {
               {statusDesigns.map((design) => (
                 <button
                   key={design.value}
+                  type="button"
+                  aria-pressed={themeConfig.statusDesign === design.value}
                   onClick={() => setStatusDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.statusDesign === design.value
@@ -446,7 +461,10 @@ const ThemeSwitcher = () => {
                     <div className="text-[10px] text-muted-foreground">{design.description}</div>
                   </div>
                   {themeConfig.statusDesign === design.value && (
-                    <div className="h-2 w-2 rounded-full bg-primary mt-0.5" />
+                    <div
+                      aria-hidden="true"
+                      className="semantic-icon-transition mt-0.5 h-2 w-2 rounded-full bg-primary"
+                    />
                   )}
                 </button>
               ))}
@@ -467,9 +485,16 @@ const ThemeSwitcher = () => {
                   "h-9 justify-center gap-2 text-xs",
                   nodeViewMode === "grid" && "bg-primary/10"
                 )}
+                aria-pressed={nodeViewMode === "grid"}
                 onClick={() => setNodeViewMode("grid")}
               >
-                <Grid3X3 className="h-4 w-4" />
+                <Grid3X3
+                  aria-hidden="true"
+                  className={cn(
+                    "h-4 w-4 transition-transform duration-200 motion-reduce:transition-none",
+                    nodeViewMode === "grid" && "scale-110"
+                  )}
+                />
                 {t("nodeDisplay.grid", { defaultValue: "Grid" })}
               </Button>
               <Button
@@ -480,9 +505,16 @@ const ThemeSwitcher = () => {
                   "h-9 justify-center gap-2 text-xs",
                   nodeViewMode === "table" && "bg-primary/10"
                 )}
+                aria-pressed={nodeViewMode === "table"}
                 onClick={() => setNodeViewMode("table")}
               >
-                <Table2 className="h-4 w-4" />
+                <Table2
+                  aria-hidden="true"
+                  className={cn(
+                    "h-4 w-4 transition-transform duration-200 motion-reduce:transition-none",
+                    nodeViewMode === "table" && "scale-110"
+                  )}
+                />
                 {t("nodeDisplay.table", { defaultValue: "Table" })}
               </Button>
             </div>
@@ -497,6 +529,8 @@ const ThemeSwitcher = () => {
               {graphDesigns.map((design) => (
                 <button
                   key={design.value}
+                  type="button"
+                  aria-pressed={themeConfig.graphDesign === design.value}
                   onClick={() => setGraphDesign(design.value)}
                   className={`flex items-start gap-2 rounded-lg p-2 text-left transition-all ${
                     themeConfig.graphDesign === design.value
@@ -509,7 +543,10 @@ const ThemeSwitcher = () => {
                     <div className="text-[10px] text-muted-foreground">{design.description}</div>
                   </div>
                   {themeConfig.graphDesign === design.value && (
-                    <div className="h-2 w-2 rounded-full bg-primary mt-0.5" />
+                    <div
+                      aria-hidden="true"
+                      className="semantic-icon-transition mt-0.5 h-2 w-2 rounded-full bg-primary"
+                    />
                   )}
                 </button>
               ))}
@@ -546,14 +583,17 @@ const ThemeSwitcher = () => {
               />
               <div className="flex gap-2">
                 <Button
+                  type="button"
                   size="sm"
                   variant="default"
                   className="flex-1 text-xs h-8"
                   onClick={() => setBackgroundImageUrl(bgUrlInput)}
                 >
+                  <Check aria-hidden="true" className="h-3.5 w-3.5 semantic-icon-transition" />
                   {t('themeCustomizer.apply', { defaultValue: 'Apply' })}
                 </Button>
                 <Button
+                  type="button"
                   size="sm"
                   variant="outline"
                   className="flex-1 text-xs h-8"
@@ -562,6 +602,7 @@ const ThemeSwitcher = () => {
                     setBackgroundImageUrl('');
                   }}
                 >
+                  <X aria-hidden="true" className="h-3.5 w-3.5 semantic-icon-transition" />
                   {t('themeCustomizer.clear', { defaultValue: 'Clear' })}
                 </Button>
               </div>
@@ -585,6 +626,7 @@ const ThemeSwitcher = () => {
                         <button
                           key={type.value}
                           type="button"
+                          aria-pressed={themeConfig.backgroundBlurType === type.value}
                           onClick={() => setBackgroundBlurType(type.value)}
                           className={`rounded-md p-2 text-left transition-all ${
                             themeConfig.backgroundBlurType === type.value

@@ -10,7 +10,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme, type Appearance } from "@/contexts/ThemeContext";
+
+function AppearanceIcon({ appearance }: { appearance: Appearance }) {
+  const Icon = appearance === "light" ? Sun : appearance === "dark" ? Moon : Monitor;
+
+  return (
+    <span className="relative inline-flex size-4 shrink-0 items-center justify-center">
+      <Icon
+        key={appearance}
+        aria-hidden="true"
+        className="absolute inset-0 size-4 semantic-icon-transition"
+      />
+    </span>
+  );
+}
 
 export default function DarkModeToggle() {
   const { appearance, setAppearance } = useTheme();
@@ -24,30 +38,17 @@ export default function DarkModeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="h-9 w-9">
-        <Sun className="h-4 w-4" />
+      <Button type="button" variant="ghost" size="icon" className="h-9 w-9">
+        <AppearanceIcon appearance="light" />
       </Button>
     );
   }
 
-  const getIcon = () => {
-    switch (appearance) {
-      case "light":
-        return <Sun className="h-4 w-4" />;
-      case "dark":
-        return <Moon className="h-4 w-4" />;
-      case "system":
-        return <Monitor className="h-4 w-4" />;
-      default:
-        return <Monitor className="h-4 w-4" />;
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9">
-          {getIcon()}
+        <Button type="button" variant="ghost" size="icon" className="h-9 w-9">
+          <AppearanceIcon appearance={appearance} />
           <span className="sr-only">
             {t("theme.toggle", { defaultValue: "Toggle theme" })}
           </span>
@@ -56,23 +57,38 @@ export default function DarkModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => setAppearance("light")}
+          role="menuitemradio"
+          aria-checked={appearance === "light"}
           className={appearance === "light" ? "bg-accent" : ""}
         >
-          <Sun className="mr-2 h-4 w-4" />
+          <Sun
+            aria-hidden="true"
+            className={`mr-2 h-4 w-4 transition-transform duration-200 motion-reduce:transition-none ${appearance === "light" ? "scale-110" : ""}`}
+          />
           <span>{t("theme.light", { defaultValue: "Light" })}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setAppearance("dark")}
+          role="menuitemradio"
+          aria-checked={appearance === "dark"}
           className={appearance === "dark" ? "bg-accent" : ""}
         >
-          <Moon className="mr-2 h-4 w-4" />
+          <Moon
+            aria-hidden="true"
+            className={`mr-2 h-4 w-4 transition-transform duration-200 motion-reduce:transition-none ${appearance === "dark" ? "scale-110" : ""}`}
+          />
           <span>{t("theme.dark", { defaultValue: "Dark" })}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setAppearance("system")}
+          role="menuitemradio"
+          aria-checked={appearance === "system"}
           className={appearance === "system" ? "bg-accent" : ""}
         >
-          <Monitor className="mr-2 h-4 w-4" />
+          <Monitor
+            aria-hidden="true"
+            className={`mr-2 h-4 w-4 transition-transform duration-200 motion-reduce:transition-none ${appearance === "system" ? "scale-110" : ""}`}
+          />
           <span>{t("theme.system", { defaultValue: "System" })}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

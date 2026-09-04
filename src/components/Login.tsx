@@ -16,6 +16,9 @@ import { TablerSettings } from "./Icones/Tabler";
 import { AccountProvider, useAccount } from "@/contexts/AccountContext";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import { useMounted } from "@/hooks/useMounted";
+import { LogIn } from "lucide-react";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 
 type LoginDialogProps = {
   trigger?: React.ReactNode | string;
@@ -48,10 +51,12 @@ const LoginDialogContent = ({
   const [password, setPassword] = React.useState("");
   const [twoFac, setTwoFac] = React.useState("");
   const [errorMsg, setErrorMsg] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
   const [require2FA, setRequire2FA] = React.useState(false);
   const [open, setOpen] = React.useState(autoOpen);
   const oauthRedirectStarted = React.useRef(false);
+  const { status: loginStatus, run: runLogin } = useActionFeedback();
+  const { status: oauthStatus, run: runOAuth } = useActionFeedback();
+  const isLoggingIn = loginStatus === "loading";
 
   const publicInfoReady = publicInfo !== null;
   const passwordLoginEnabled = publicInfoReady
@@ -88,53 +93,69 @@ const LoginDialogContent = ({
     startOAuthLogin();
   }, [shouldAutoRedirectToOAuth]);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!isFormValid) {
       setErrorMsg("Username and password are required");
       return;
     }
 
     setErrorMsg("");
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          ...(twoFac && !account?.["2fa_enabled"]
-            ? { "2fa_code": twoFac }
-            : {}),
-        }),
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        refresh();
-        if (typeof onLoginSuccess === "function") {
-          onLoginSuccess();
-          return;
+    void runLogin(async () => {
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            ...(twoFac && !account?.["2fa_enabled"]
+              ? { "2fa_code": twoFac }
+              : {}),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 200) {
+          refresh();
+          if (typeof onLoginSuccess === "function") {
+            onLoginSuccess();
+          } else {
+            window.open("/admin", "_self");
+          }
+          return true;
         }
-        window.open("/admin", "_self");
-      } else {
+
         if (data.message === "2FA code is required") {
           setRequire2FA(true);
-          return;
+          return false;
         }
+
         setErrorMsg(data.message || "Login failed");
+        return false;
+      } catch (err) {
+        setErrorMsg("Network error");
+        console.error(err);
+        return false;
       }
-    } catch (err) {
-      setErrorMsg("Network error");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
+    });
+  };
+
+  const handleOAuthLogin = () => {
+    void runOAuth(async () => {
+      try {
+        startOAuthLogin();
+        return true;
+      } catch (err) {
+        setErrorMsg("OAuth login failed");
+        console.error(err);
+        return false;
+      }
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isLoading && isFormValid) {
+    if (e.key === "Enter" && !isLoggingIn && isFormValid) {
       e.preventDefault();
       handleLogin();
     }
@@ -146,11 +167,17 @@ const LoginDialogContent = ({
     (!publicInfoReady && !publicInfoError);
 
   if (authStateLoading || shouldAutoRedirectToOAuth) {
-    return <Button disabled>{mounted ? t("loading") : "Loading..."}</Button>;
+    return (
+      <Button disabled aria-busy="true">
+        <ActionFeedbackIcon status="loading" icon={LogIn} />
+        {mounted ? t("loading") : "Loading..."}
+      </Button>
+    );
   }
   if (error || publicInfoError || !account || !publicInfoReady) {
     return (
       <Button disabled className="text-destructive">
+        <ActionFeedbackIcon status="error" icon={LogIn} />
         Error
       </Button>
     );
@@ -171,18 +198,51 @@ const LoginDialogContent = ({
   if (onlyOAuthLogin && !autoOpen) {
     if (trigger) {
       if (typeof trigger === "string") {
-        return <Button onClick={startOAuthLogin}>{trigger}</Button>;
+        return (
+          <Button
+            onClick={handleOAuthLogin}
+            disabled={oauthStatus === "loading"}
+            aria-busy={oauthStatus === "loading"}
+          >
+            <ActionFeedbackIcon status={oauthStatus} icon={LogIn} />
+            {trigger}
+          </Button>
+        );
       }
       return (
         <span
-          onClick={startOAuthLogin}
-          style={{ cursor: "pointer", display: "inline-flex" }}
+          role="button"
+          tabIndex={oauthStatus === "loading" ? -1 : 0}
+          aria-busy={oauthStatus === "loading"}
+          onClick={handleOAuthLogin}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleOAuthLogin();
+            }
+          }}
+          style={{
+            cursor: oauthStatus === "loading" ? "wait" : "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
         >
+          <ActionFeedbackIcon status={oauthStatus} icon={LogIn} />
           {trigger}
         </span>
       );
     }
-    return <Button onClick={startOAuthLogin}>{t("login.title")}</Button>;
+    return (
+      <Button
+        onClick={handleOAuthLogin}
+        disabled={oauthStatus === "loading"}
+        aria-busy={oauthStatus === "loading"}
+      >
+        <ActionFeedbackIcon status={oauthStatus} icon={LogIn} />
+        {t("login.title")}
+      </Button>
+    );
   }
 
   return (
@@ -198,12 +258,12 @@ const LoginDialogContent = ({
             {info && <label>{info}</label>}
           </div>
         </DialogDescription>
-        <Box
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (isFormValid && !isLoading) {
-              handleLogin();
-            }
+          <Box
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (isFormValid && !isLoggingIn) {
+                handleLogin();
+              }
           }}
         >
           <Flex direction="column" gap="3">
@@ -218,7 +278,7 @@ const LoginDialogContent = ({
                     onChange={(e) => setUsername(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="admin"
-                    disabled={isLoading}
+                    disabled={isLoggingIn}
                     autoFocus
                   />
                 </label>
@@ -232,7 +292,7 @@ const LoginDialogContent = ({
                     onKeyDown={handleKeyDown}
                     type="password"
                     placeholder={t("login.password_placeholder")}
-                    disabled={isLoading}
+                    disabled={isLoggingIn}
                   />
                 </label>
                 <label hidden={!require2FA}>
@@ -245,7 +305,7 @@ const LoginDialogContent = ({
                     onKeyDown={handleKeyDown}
                     type="text"
                     placeholder="000000"
-                    disabled={isLoading}
+                    disabled={isLoggingIn}
                   />
                 </label>
                 {errorMsg && (
@@ -255,21 +315,25 @@ const LoginDialogContent = ({
                 )}
                 <Button
                   type="submit"
-                  disabled={isLoading || !isFormValid}
-                  style={{ opacity: isLoading || !isFormValid ? 0.6 : 1 }}
+                  disabled={isLoggingIn || !isFormValid}
+                  aria-busy={isLoggingIn}
+                  style={{ opacity: isLoggingIn || !isFormValid ? 0.6 : 1 }}
                   onClick={handleLogin}
                 >
-                  {isLoading ? "Logging in..." : t("login.title")}
+                  <ActionFeedbackIcon status={loginStatus} icon={LogIn} />
+                  {isLoggingIn ? "Logging in..." : t("login.title")}
                 </Button>
               </>
             )}
             {oauthEnabled && (
               <Button
-                onClick={startOAuthLogin}
+                onClick={handleOAuthLogin}
                 variant={passwordLoginEnabled ? "outline" : "default"}
-                disabled={isLoading}
+                disabled={isLoggingIn || oauthStatus === "loading"}
+                aria-busy={oauthStatus === "loading"}
                 type="button"
               >
+                <ActionFeedbackIcon status={oauthStatus} icon={LogIn} />
                 {t("login.login_with", {
                   provider:
                     publicInfo.oauth_provider === "generic"

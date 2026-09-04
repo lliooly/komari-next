@@ -146,9 +146,17 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="sm"
               className={cn("h-8 gap-2 px-3", viewMode === "grid" && "bg-card shadow-sm")}
+              type="button"
+              aria-pressed={viewMode === "grid"}
               onClick={() => setViewMode("grid")}
             >
-              <Grid3X3 className="h-4 w-4" />
+              <Grid3X3
+                aria-hidden="true"
+                className={cn(
+                  "h-4 w-4 transition-transform duration-200",
+                  viewMode === "grid" && "scale-110"
+                )}
+              />
               <span className="hidden sm:inline">
                 {t("nodeDisplay.grid", { defaultValue: "Grid" })}
               </span>
@@ -157,9 +165,17 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
               variant={viewMode === "table" ? "secondary" : "ghost"}
               size="sm"
               className={cn("h-8 gap-2 px-3", viewMode === "table" && "bg-card shadow-sm")}
+              type="button"
+              aria-pressed={viewMode === "table"}
               onClick={() => setViewMode("table")}
             >
-              <Table2 className="h-4 w-4" />
+              <Table2
+                aria-hidden="true"
+                className={cn(
+                  "h-4 w-4 transition-transform duration-200",
+                  viewMode === "table" && "scale-110"
+                )}
+              />
               <span className="hidden sm:inline">
                 {t("nodeDisplay.table", { defaultValue: "Table" })}
               </span>

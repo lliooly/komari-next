@@ -1,7 +1,10 @@
 import React from "react";
 import { Button, Flex, TextField, TextArea } from "@radix-ui/themes";
+import { Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SettingCardCollapse } from "./SettingCard";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 
 interface InputItem {
   tag: string;
@@ -45,8 +48,9 @@ export function SettingCardMultiInputCollapse({
         return acc;
       }, {} as Record<string, string>)
   );
-  const [saving, setSaving] = React.useState(false);
-  const savingState = isSaving !== undefined ? isSaving : saving;
+  const { status: saveStatus, run: runSave } = useActionFeedback();
+  const savingState =
+    isSaving !== undefined ? isSaving : saveStatus === "loading";
 
   const handleChange = (tag: string, value: string) => {
     setValues((prev) => {
@@ -56,13 +60,11 @@ export function SettingCardMultiInputCollapse({
     });
   };
 
-  const handleSave = async () => {
-    if (isSaving === undefined) setSaving(true);
-    try {
-      await onSave(values);
-    } finally {
-      if (isSaving === undefined) setSaving(false);
-    }
+  const handleSave = () => {
+    void runSave(async () => {
+      const result = await onSave(values);
+      return result !== false;
+    });
   };
 
   return (
@@ -119,7 +121,14 @@ export function SettingCardMultiInputCollapse({
           return child;
         })}
         <div>
-          <Button variant="solid" className="mt-2" onClick={handleSave} disabled={savingState}>
+          <Button
+            variant="solid"
+            className="mt-2"
+            onClick={handleSave}
+            disabled={savingState}
+            aria-busy={saveStatus === "loading"}
+          >
+            <ActionFeedbackIcon status={saveStatus} icon={Save} />
             {t("save")}
           </Button>
         </div>

@@ -11,7 +11,10 @@ import { Card } from "@/components/ui/card";
 import { Flex } from "@/components/ui/flex";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
-import { Upload as UploadIcon } from "lucide-react";
+import { Upload as UploadIcon, X } from "lucide-react";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
+import type { ActionFeedbackStatus } from "@/hooks/useActionFeedback";
 
 export type UploadDialogProps = {
   open: boolean;
@@ -27,7 +30,9 @@ export type UploadDialogProps = {
   uploadingText?: React.ReactNode;
   cancelUploadLabel?: React.ReactNode;
   onCancelUpload?: () => void;
-  onFileSelected?: (file: File) => void;
+  onFileSelected?: (file: File) => void | boolean | Promise<boolean | void>;
+  /** 可选的受控上传反馈状态；未提供时，异步 onFileSelected 会自动反馈。 */
+  uploadStatus?: ActionFeedbackStatus;
   closeLabel?: React.ReactNode;
 };
 
@@ -51,6 +56,12 @@ function matchesAccept(file: File, accept: string | undefined) {
   return false;
 }
 
+function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
+  return (
+    (typeof value === "object" && value !== null) || typeof value === "function"
+  ) && typeof (value as { then?: unknown }).then === "function";
+}
+
 const UploadDialog: React.FC<UploadDialogProps> = ({
   open,
   onOpenChange,
@@ -66,15 +77,49 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
   cancelUploadLabel,
   onCancelUpload,
   onFileSelected,
+  uploadStatus,
   closeLabel = "Close",
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { status: selectionStatus, run: runUpload } = useActionFeedback();
+  const feedbackStatus =
+    uploadStatus ?? (uploading ? "loading" : selectionStatus);
+  const isBusy = feedbackStatus === "loading";
+
+  const handleFile = (file: File) => {
+    if (!onFileSelected || isBusy) return;
+
+    let result: void | boolean | Promise<boolean | void>;
+    try {
+      result = onFileSelected(file);
+    } catch (error) {
+      console.error("Failed to select file: ", error);
+      void runUpload(async () => false);
+      return;
+    }
+
+    if (result === false) {
+      void runUpload(async () => false);
+      return;
+    }
+
+    if (isPromiseLike(result)) {
+      void runUpload(async () => {
+        try {
+          return (await result) !== false;
+        } catch (error) {
+          console.error("Failed to upload file: ", error);
+          return false;
+        }
+      });
+    }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     const file = files.find((f) => matchesAccept(f, accept));
-    if (file && onFileSelected) onFileSelected(file);
+    if (file) handleFile(file);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -83,8 +128,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && matchesAccept(file, accept) && onFileSelected)
-      onFileSelected(file);
+    if (file && matchesAccept(file, accept)) handleFile(file);
   };
 
   return (
@@ -100,12 +144,28 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
             direction="column"
             align="center"
             justify="center"
+            role="button"
+            tabIndex={isBusy ? -1 : 0}
+            aria-busy={isBusy}
+            aria-disabled={isBusy}
             className="rounded-lg bg-muted/30 p-8 text-center cursor-pointer transition-colors hover:bg-muted/45"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            onClick={() => inputRef.current?.click()}
+            onClick={() => {
+              if (!isBusy) inputRef.current?.click();
+            }}
+            onKeyDown={(e) => {
+              if (!isBusy && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                inputRef.current?.click();
+              }
+            }}
           >
-            <UploadIcon size={48} className="mx-auto text-gray-400 mb-4" />
+            <ActionFeedbackIcon
+              status={feedbackStatus}
+              icon={UploadIcon}
+              className="mx-auto mb-4 size-12 text-gray-400"
+            />
             {dragDropText ? (
               <Text size="3" weight="medium">{dragDropText}</Text>
             ) : null}
@@ -161,6 +221,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
                   onClick={onCancelUpload}
                   disabled={progress >= 100}
                 >
+                  <X className="size-4" />
                   {cancelUploadLabel ?? "Cancel"}
                 </Button>
               ) : null}

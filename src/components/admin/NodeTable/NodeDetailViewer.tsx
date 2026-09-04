@@ -12,9 +12,10 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
-import { Copy } from "lucide-react";
 import { t } from "i18next";
-import { Button, IconButton } from "@radix-ui/themes";
+import { Button } from "@radix-ui/themes";
+
+import { CopyFeedbackButton } from "./CopyFeedbackButton";
 
 function formatBytes(bytes?: number | string): string {
   if (!bytes || isNaN(Number(bytes))) return "-";
@@ -60,16 +61,7 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                       >
                         {item.ipv4}
                       </span>
-                      <IconButton
-                        variant="ghost"
-                        className="size-5"
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(item.ipv4!);
-                        }}
-                      >
-                        <Copy size={16} />
-                      </IconButton>
+                      <CopyFeedbackButton value={item.ipv4} />
                     </div>
                   )}
                   {item.ipv6 && (
@@ -80,16 +72,7 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                       >
                         {item.ipv6}
                       </span>
-                      <IconButton
-                        variant="ghost"
-                        className="size-5"
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(item.ipv6!);
-                        }}
-                      >
-                        <Copy size={16} />
-                      </IconButton>
+                      <CopyFeedbackButton value={item.ipv6} />
                     </div>
                   )}
                 </div>
