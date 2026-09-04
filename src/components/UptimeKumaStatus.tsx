@@ -16,7 +16,9 @@ import {
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
 import { useUptimeKumaStatus } from "@/hooks/useUptimeKumaStatus";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 import type {
   UptimeKumaHeartbeat,
   UptimeKumaService,
@@ -240,9 +242,6 @@ function ServiceRow({
           <div className="truncate text-sm font-medium" title={service.name}>
             {service.name}
           </div>
-          <div className="mt-1 text-xs text-muted-foreground">
-            {t("uptimeKuma.monitorId", { id: service.id })}
-          </div>
         </div>
         <ServiceStatusBadge status={service.status} t={t} />
       </div>
@@ -289,6 +288,11 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
   const enabled = settings?.enabled === true;
   const { data, isLoading, error, lastUpdatedAt, refresh } =
     useUptimeKumaStatus(settings);
+  const {
+    status: refreshStatus,
+    run: runRefresh,
+  } = useActionFeedback();
+  const handleManualRefresh = () => runRefresh(() => refresh("manual"));
   const statusPageUrl =
     data?.statusPageUrl ?? buildUptimeKumaUrls(settings ?? {})?.statusPageUrl;
 
@@ -342,8 +346,15 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
               defaultValue: "Uptime Kuma service status is temporarily unavailable.",
             })}
           </p>
-          <Button type="button" variant="outline" size="sm" onClick={() => void refresh()}>
-            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void handleManualRefresh()}
+            disabled={refreshStatus === "loading"}
+            aria-busy={refreshStatus === "loading"}
+          >
+            <ActionFeedbackIcon status={refreshStatus} icon={RefreshCw} />
             {t("uptimeKuma.retry", { defaultValue: "Retry" })}
           </Button>
         </CardContent>
@@ -369,7 +380,10 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
     : unavailableLabel;
 
   return (
-    <Card data-card-blur-surface="true" aria-busy={isLoading}>
+    <Card
+      data-card-blur-surface="true"
+      aria-busy={isLoading || refreshStatus === "loading"}
+    >
       <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -398,10 +412,11 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
             size="icon"
             aria-label={t("uptimeKuma.refresh", { defaultValue: "Refresh service status" })}
             title={t("uptimeKuma.refresh", { defaultValue: "Refresh service status" })}
-            onClick={() => void refresh()}
-            disabled={isLoading}
+            onClick={() => void handleManualRefresh()}
+            disabled={refreshStatus === "loading"}
+            aria-busy={refreshStatus === "loading"}
           >
-            <RefreshCw className={isLoading ? "h-4 w-4 animate-spin" : "h-4 w-4"} aria-hidden="true" />
+            <ActionFeedbackIcon status={refreshStatus} icon={RefreshCw} />
           </Button>
           <Button
             asChild

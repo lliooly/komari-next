@@ -18,6 +18,8 @@ export interface UptimeKumaStatusState {
   lastUpdatedAt: Date | null;
 }
 
+type RefreshSource = "background" | "manual";
+
 function getErrorMessage(error: unknown): string {
   return error instanceof Error
     ? error.message
@@ -43,7 +45,11 @@ export function useUptimeKumaStatus(
   const requestIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (source: RefreshSource = "background"): Promise<boolean> => {
+    if (source === "background" && controllerRef.current) {
+      return false;
+    }
+
     const requestId = ++requestIdRef.current;
     controllerRef.current?.abort();
 
@@ -54,7 +60,7 @@ export function useUptimeKumaStatus(
         error: null,
         lastUpdatedAt: null,
       });
-      return;
+      return false;
     }
 
     if (!urls) {
@@ -64,7 +70,7 @@ export function useUptimeKumaStatus(
         error: "Uptime Kuma URL or status page slug is invalid",
         lastUpdatedAt: null,
       });
-      return;
+      return false;
     }
 
     const controller = new AbortController();
@@ -87,7 +93,7 @@ export function useUptimeKumaStatus(
       );
 
       if (controller.signal.aborted || requestId !== requestIdRef.current) {
-        return;
+        return false;
       }
 
       setState({
@@ -96,12 +102,13 @@ export function useUptimeKumaStatus(
         error: null,
         lastUpdatedAt: new Date(),
       });
+      return true;
     } catch (error) {
       if (requestId !== requestIdRef.current) {
-        return;
+        return false;
       }
       if (controller.signal.aborted && !didTimeout) {
-        return;
+        return false;
       }
 
       setState((previous) => ({
@@ -109,6 +116,7 @@ export function useUptimeKumaStatus(
         isLoading: false,
         error: didTimeout ? "Uptime Kuma request timed out" : getErrorMessage(error),
       }));
+      return false;
     } finally {
       window.clearTimeout(timeout);
       if (controllerRef.current === controller) {

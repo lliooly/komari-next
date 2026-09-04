@@ -121,6 +121,7 @@
       "disableWebSsh": "Disable remote control",
       "dragToReorder": "Long press and drag to reorder",
       "editNodePrice": "Edit Price",
+      "errorAddNode": "Failed to add node",
       "errorLoadNodeList": "Unable to load the node list",
       "errorRefreshNodeList": "Failed to refresh the list",
       "excludeNics": "Exclude specific network interfaces.",

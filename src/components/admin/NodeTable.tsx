@@ -54,9 +54,10 @@ import type { schema } from "./NodeTable/schema/node";
 import { DataTableRefreshContext } from "./NodeTable/schema/DataTableRefreshContext";
 import { t } from "i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 import { ActionsCell } from "./NodeTable/NodeFunction";
 import { toast } from "sonner";
-import { LoadingIcon } from "../Icones/icon";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
 import { Dialog, Flex, Button, IconButton, Checkbox, TextField } from "@radix-ui/themes";
 import Loading from "../loading";
 
@@ -176,10 +177,12 @@ export function DataTable() {
     [data]
   );
   const [newNodeName, setNewNodeName] = React.useState("");
-  const [isAddingNode, setIsAddingNode] = React.useState(false);
+  const {
+    status: addNodeStatus,
+    run: runAddNode,
+  } = useActionFeedback();
 
-  async function handleAddNode() {
-    setIsAddingNode(true);
+  async function handleAddNodeRequest(): Promise<boolean> {
     try {
       const response = await fetch("/api/admin/client/add", {
         method: "POST",
@@ -191,10 +194,11 @@ export function DataTable() {
       }
       setNewNodeName("");
       refreshTable?.();
+      return true;
     } catch (error) {
       console.error("Failed to add node:", error);
-    } finally {
-      setIsAddingNode(false);
+      toast.error(t("admin.nodeTable.errorAddNode", "添加节点失败"));
+      return false;
     }
   }
 
@@ -353,14 +357,21 @@ export function DataTable() {
               />
             </div>
             <Flex justify="end" gap="2" className="mt-4">
-              <Button onClick={handleAddNode} disabled={isAddingNode}>
-                {isAddingNode ? (
+              <Button
+                onClick={() => void runAddNode(handleAddNodeRequest)}
+                disabled={addNodeStatus === "loading"}
+                aria-busy={addNodeStatus === "loading"}
+              >
+                {addNodeStatus === "loading" ? (
                   <span className="flex items-center gap-1">
-                    <LoadingIcon className="animate-spin size-4" />
+                    <ActionFeedbackIcon status={addNodeStatus} icon={PlusIcon} />
                     {t("admin.nodeTable.submitting")}
                   </span>
                 ) : (
-                  t("admin.nodeTable.submit")
+                  <span className="flex items-center gap-1">
+                    <ActionFeedbackIcon status={addNodeStatus} icon={PlusIcon} />
+                    {t("admin.nodeTable.submit")}
+                  </span>
                 )}
               </Button>
             </Flex>

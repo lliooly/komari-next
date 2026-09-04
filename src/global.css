@@ -1,6 +1,71 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.action-feedback-icon__item {
+  transform-origin: center;
+}
+
+.action-feedback-icon__item--loading {
+  animation: action-feedback-icon-spin 800ms linear infinite;
+}
+
+.action-feedback-icon__item--success {
+  animation: action-feedback-icon-enter 140ms ease-out both;
+}
+
+.action-feedback-icon__item--error {
+  animation: action-feedback-icon-error 360ms ease-out both;
+}
+
+@keyframes action-feedback-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes action-feedback-icon-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes action-feedback-icon-error {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateX(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1) translateX(-2px);
+  }
+  40% {
+    transform: scale(1) translateX(2px);
+  }
+  60% {
+    transform: scale(1) translateX(-1.5px);
+  }
+  80% {
+    transform: scale(1) translateX(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action-feedback-icon__item--loading,
+  .action-feedback-icon__item--success,
+  .action-feedback-icon__item--error {
+    animation: none;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

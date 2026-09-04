@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { ActionFeedbackIcon } from "@/components/ui/action-feedback-icon";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useActionFeedback } from "@/hooks/useActionFeedback";
 import { type LoadedRates, convertAmount, loadRates } from "@/lib/exchangeRates";
 import { OPEN_REMAINING_VALUE_CALCULATOR_EVENT } from "@/lib/remainingValueEvents";
 import {
@@ -203,8 +205,11 @@ export default function RemainingValueCalculator() {
     useLocalStorage<DisplayCurrency>("remainingValueDisplayCurrency", "USD");
   const [detailFilter, setDetailFilter] = useState<DetailFilter>("all");
   const [ratesState, setRatesState] = useState<LoadedRates | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [ratesError, setRatesError] = useState<string | null>(null);
+  const {
+    status: refreshStatus,
+    run: runRefresh,
+  } = useActionFeedback();
 
   const locale = i18n.resolvedLanguage || i18n.language || "zh-CN";
   const snapshot = useMemo(() => buildRemainingValueSnapshot(nodeList ?? []), [nodeList]);
@@ -274,13 +279,12 @@ export default function RemainingValueCalculator() {
     );
   }, [convertedActive, ratesState]);
 
-  const refreshRates = async (forceRefresh = false) => {
+  const refreshRates = async (forceRefresh = false): Promise<boolean> => {
     const sourceCurrencies = Array.from(new Set(snapshot.active.map((item) => item.currencyCode)));
     if (sourceCurrencies.length === 0) {
-      return;
+      return true;
     }
 
-    setIsRefreshing(true);
     setRatesError(null);
 
     try {
@@ -291,12 +295,12 @@ export default function RemainingValueCalculator() {
       });
 
       setRatesState(loaded);
+      return true;
     } catch {
       setRatesError(
         t("remainingValue.errorRatesUnavailable", { defaultValue: "Unable to fetch exchange rates right now" }),
       );
-    } finally {
-      setIsRefreshing(false);
+      return false;
     }
   };
 
@@ -525,9 +529,11 @@ export default function RemainingValueCalculator() {
             variant="outline"
             size="sm"
             className="gap-2"
-            onClick={() => void refreshRates(true)}
+            onClick={() => void runRefresh(() => refreshRates(true))}
+            disabled={refreshStatus === "loading"}
+            aria-busy={refreshStatus === "loading"}
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+            <ActionFeedbackIcon status={refreshStatus} icon={RefreshCw} />
             <span>{t("remainingValue.refreshRates", { defaultValue: "Refresh Rates" })}</span>
           </Button>
         </div>
