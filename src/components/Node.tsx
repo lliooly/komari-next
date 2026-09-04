@@ -242,6 +242,7 @@ interface NodeProps {
   online: boolean;
   pingStatsEnabled?: boolean;
   revealDelay?: number;
+  revealReady?: boolean;
 }
 
 const Node = ({
@@ -250,6 +251,7 @@ const Node = ({
   online,
   pingStatsEnabled = false,
   revealDelay = 0,
+  revealReady = true,
 }: NodeProps) => {
   const [t] = useTranslation();
   const { guestDisplay, themeConfig } = useTheme();
@@ -334,7 +336,7 @@ const Node = ({
 
   return (
     <Card
-      {...getRevealProps(revealDelay)}
+      {...getRevealProps(revealDelay, revealReady)}
       id={basic.uuid}
       className={cardStyles[themeConfig.cardLayout] || cardStyles.classic}
     >
@@ -772,6 +774,7 @@ type NodeGridProps = {
   nodes: NodeBasicInfo[];
   liveData: LiveData;
   revealDelay?: number;
+  revealReady?: boolean;
 };
 
 type QueuedPingStatsRow = {
@@ -784,7 +787,12 @@ const NODE_GRID_GAP = 24;
 const PING_STATS_ROW_LOAD_DELAY_MS = 400;
 const PING_STATS_ROW_ROOT_MARGIN = "360px 0px";
 
-export const NodeGrid = ({ nodes, liveData, revealDelay = 0 }: NodeGridProps) => {
+export const NodeGrid = ({
+  nodes,
+  liveData,
+  revealDelay = 0,
+  revealReady = true,
+}: NodeGridProps) => {
   const gridRef = React.useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = React.useState(1);
   const prefersReducedMotion = useReducedMotion();
@@ -1051,7 +1059,8 @@ export const NodeGrid = ({ nodes, liveData, revealDelay = 0 }: NodeGridProps) =>
                 live={nodeData}
                 online={isOnline}
                 pingStatsEnabled={pingStatsActiveNodes.has(node.uuid)}
-                revealDelay={revealDelay + Math.min(index, 5) * 40}
+                revealDelay={revealDelay + Math.min(index, 5) * 55}
+                revealReady={revealReady}
               />
             </motion.div>
           );

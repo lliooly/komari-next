@@ -24,6 +24,7 @@ interface NodeMapViewProps {
   liveData: LiveData;
   mapOnly?: boolean;
   revealDelay?: number;
+  revealReady?: boolean;
 }
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
@@ -79,6 +80,7 @@ export function NodeMapView({
   liveData,
   mapOnly = false,
   revealDelay = 0,
+  revealReady = true,
 }: NodeMapViewProps) {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
@@ -252,7 +254,7 @@ export function NodeMapView({
 
   if (!summary.totalNodes) {
     return (
-      <Card {...getRevealProps(revealDelay)} className="overflow-hidden rounded-lg bg-card/95 shadow-sm">
+      <Card {...getRevealProps(revealDelay, revealReady)} className="overflow-hidden rounded-lg bg-card/95 shadow-sm">
         {!mapOnly && (
           <CardHeader>
             <CardTitle>{t("mapView.title", { defaultValue: "Global Distribution" })}</CardTitle>
@@ -269,7 +271,7 @@ export function NodeMapView({
 
   return (
     <Card
-      {...(mapOnly ? {} : getRevealProps(revealDelay))}
+      {...(mapOnly ? {} : getRevealProps(revealDelay, revealReady))}
       className={
         mapOnly
           ? "node-map-view overflow-visible rounded-none bg-transparent shadow-none"
@@ -332,7 +334,7 @@ export function NodeMapView({
         <div className={mapOnly ? "node-map-view__layout node-map-view__layout--map-only" : "node-map-view__layout"}>
           <div
             ref={mapSurfaceRef}
-            {...(mapOnly ? getRevealProps(revealDelay) : {})}
+            {...(mapOnly ? getRevealProps(revealDelay, revealReady) : {})}
             className="node-map-view__surface"
           >
             <svg
@@ -433,7 +435,7 @@ export function NodeMapView({
 
             <div className="node-map-view__legend node-map-view__legend--inset">
               <div
-                {...getRevealProps(revealDelay + 60)}
+                {...getRevealProps(revealDelay + 80, revealReady)}
                 className="node-map-view__legend-card node-map-view__legend-card--status"
               >
                 <div className="node-map-view__legend-items node-map-view__legend-items--stacked">
@@ -454,7 +456,7 @@ export function NodeMapView({
 
               {summary.unmappedNodes.length > 0 && (
                 <div
-                  {...getRevealProps(revealDelay + 120)}
+                  {...getRevealProps(revealDelay + 160, revealReady)}
                   className="node-map-view__legend-card node-map-view__legend-card--stacked"
                 >
                   <div className="node-map-view__legend-unmapped-header">

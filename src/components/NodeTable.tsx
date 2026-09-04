@@ -38,6 +38,7 @@ interface NodeTableProps {
   nodes: NodeBasicInfo[];
   liveData: LiveData;
   revealDelay?: number;
+  revealReady?: boolean;
 }
 
 type SortField = 'name' | 'os' | 'status' | 'cpu' | 'ram' | 'disk' | 'price' | 'networkUp' | 'networkDown' | 'totalUp' | 'totalDown';
@@ -48,7 +49,12 @@ interface SortState {
   order: SortOrder;
 }
 
-const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData, revealDelay = 0 }) => {
+const NodeTable: React.FC<NodeTableProps> = ({
+  nodes,
+  liveData,
+  revealDelay = 0,
+  revealReady = true,
+}) => {
   const [t] = useTranslation();
   const { guestDisplay, themeConfig } = useTheme();
   const prefersReducedMotion = useReducedMotion();
@@ -217,7 +223,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData, revealDelay = 0 
   const tableColumnCount = showBillingColumn ? 10 : 9;
 
   return (
-    <div {...getRevealProps(revealDelay)} data-card-blur-surface="true" className="rounded-xl bg-card text-card-foreground shadow-sm overflow-hidden">
+    <div {...getRevealProps(revealDelay, revealReady)} data-card-blur-surface="true" className="rounded-xl bg-card text-card-foreground shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <Table className={cn("w-full table-fixed", showBillingColumn ? "min-w-[1240px]" : "min-w-[1084px]")}>
           <TableHeader>

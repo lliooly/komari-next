@@ -137,6 +137,20 @@ export default function DashboardContent() {
   
   //#region 节点数据
   const { nodeList, isLoading, error, refresh } = useNodeList();
+  const [revealReady, setRevealReady] = React.useState(false);
+
+  useEffect(() => {
+    if (isLoading) {
+      setRevealReady(false);
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      setRevealReady(true);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isLoading]);
 
   const renderTrafficPair = (up: string, down: string) => {
     const animatedUp = <DataChange valueKey={up}>{up}</DataChange>;
@@ -314,7 +328,8 @@ export default function DashboardContent() {
                     icon={card.icon}
                     layout={themeConfig.cardLayout}
                     structuredValue={card.structuredValue}
-                    revealDelay={index * 60}
+                    revealDelay={index * 80}
+                    revealReady={revealReady}
                   />
                 </motion.div>
               ))}
@@ -326,7 +341,8 @@ export default function DashboardContent() {
             nodes={nodeList ?? []}
             liveData={live_data?.data ?? { online: [], data: {} }}
             mapOnly
-            revealDelay={280}
+            revealDelay={300}
+            revealReady={revealReady}
           />
         )}
       </div>
@@ -335,11 +351,16 @@ export default function DashboardContent() {
         <NodeDisplay
           nodes={nodeList ?? []}
           liveData={live_data?.data ?? { online: [], data: {} }}
-          revealDelay={280}
+          revealDelay={300}
+          revealReady={revealReady}
         />
       </Suspense>
 
-      <UptimeKumaStatus settings={managedThemeSettings.uptimeKuma} revealDelay={280} />
+      <UptimeKumaStatus
+        settings={managedThemeSettings.uptimeKuma}
+        revealDelay={300}
+        revealReady={revealReady}
+      />
     </div>
   );
 }
@@ -352,6 +373,7 @@ type TopCardProps = {
   layout?: 'classic' | 'modern' | 'minimal' | 'detailed' | 'compact';
   structuredValue?: boolean;
   revealDelay?: number;
+  revealReady?: boolean;
 };
 
 const TopCard: React.FC<TopCardProps> = ({
@@ -362,9 +384,10 @@ const TopCard: React.FC<TopCardProps> = ({
   layout = 'classic',
   structuredValue = false,
   revealDelay = 0,
+  revealReady = true,
 }) => {
   const mobileStructuredValueClass = "h-6 w-[5.75rem] shrink-0 overflow-hidden";
-  const revealProps = getRevealProps(revealDelay);
+  const revealProps = getRevealProps(revealDelay, revealReady);
 
   // Classic layout: Traditional card with icon on right
   if (layout === 'classic') {
