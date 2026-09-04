@@ -130,7 +130,7 @@ function HeartbeatBar({
       : formatCompactDuration(Math.max(0, Date.now() - service.lastHeartbeatAt));
 
   return (
-    <div className="mt-3 rounded-md border border-emerald-500/15 bg-emerald-500/[0.06] px-2.5 py-2">
+    <div className="w-full min-w-0 flex-1 rounded-md border border-emerald-500/15 bg-emerald-500/[0.06] px-2.5 py-2">
       <div className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
         <span>{historyRange}</span>
         <span>
@@ -191,9 +191,16 @@ function ServiceStatusBadge({
 }) {
   const meta = STATUS_META[status];
   const StatusIcon = meta.icon;
+  const isOperational = status === "up";
 
   return (
-    <Badge color={meta.color} variant="secondary" className="gap-1 whitespace-nowrap">
+    <Badge
+      color={isOperational ? undefined : meta.color}
+      variant={isOperational ? "default" : "secondary"}
+      className={`shrink-0 gap-1 whitespace-nowrap${
+        isOperational ? " bg-green-600 hover:bg-green-700" : ""
+      }`}
+    >
       <StatusIcon className="h-3 w-3" aria-hidden="true" />
       {t(meta.translationKey)}
     </Badge>
@@ -227,30 +234,34 @@ function ServiceRow({
   t: TFunction;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border/60 bg-background/35 p-3 transition-colors hover:bg-background/55 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium" title={service.name}>
-          {service.name}
+    <div className="flex flex-col gap-3 rounded-lg bg-background/35 p-3 transition-colors hover:bg-background/55">
+      <div className="flex min-w-0 items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium" title={service.name}>
+            {service.name}
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {t("uptimeKuma.monitorId", { id: service.id })}
+          </div>
         </div>
-        <div className="mt-1 text-xs text-muted-foreground">
-          {t("uptimeKuma.monitorId", { id: service.id })}
-        </div>
+        <ServiceStatusBadge status={service.status} t={t} />
+      </div>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <HeartbeatBar
           service={service}
           unavailableLabel={unavailableLabel}
           t={t}
         />
-      </div>
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
-        <ServiceStatusBadge status={service.status} t={t} />
-        <ServiceMetric
-          label={pingLabel}
-          value={formatPing(service.ping, unavailableLabel)}
-        />
-        <ServiceMetric
-          label={uptimeLabel}
-          value={formatUptime(service.uptime24h, unavailableLabel)}
-        />
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:shrink-0 sm:justify-end">
+          <ServiceMetric
+            label={pingLabel}
+            value={formatPing(service.ping, unavailableLabel)}
+          />
+          <ServiceMetric
+            label={uptimeLabel}
+            value={formatUptime(service.uptime24h, unavailableLabel)}
+          />
+        </div>
       </div>
     </div>
   );
@@ -375,8 +386,9 @@ export default function UptimeKumaStatus({ settings }: UptimeKumaStatusProps) {
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           <Badge
-            color={data.overallStatus === "up" ? "green" : data.overallStatus === "empty" ? "gray" : "amber"}
-            variant="secondary"
+            color={data.overallStatus === "up" ? undefined : data.overallStatus === "empty" ? "gray" : "amber"}
+            variant={data.overallStatus === "up" ? "default" : "secondary"}
+            className={data.overallStatus === "up" ? "bg-green-600 hover:bg-green-700" : undefined}
           >
             {overallLabel}
           </Badge>
