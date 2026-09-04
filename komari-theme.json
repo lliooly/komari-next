@@ -224,6 +224,24 @@
                 "type": "bool",
                 "label": "Show expiration to guests",
                 "default": false
+            },
+            {
+                "key": "uptimeKuma.enabled",
+                "type": "bool",
+                "label": "Enable Uptime Kuma service status",
+                "default": false
+            },
+            {
+                "key": "uptimeKuma.baseUrl",
+                "type": "text",
+                "label": "Uptime Kuma base URL",
+                "default": ""
+            },
+            {
+                "key": "uptimeKuma.slug",
+                "type": "text",
+                "label": "Uptime Kuma status page slug",
+                "default": ""
             }
         ],
         "fields": [
@@ -526,6 +544,59 @@
                     "en-US": "When enabled, visitors can see node expiration status."
                 },
                 "default": false
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "Uptime Kuma 服务状态",
+                    "zh-TW": "Uptime Kuma 服務狀態",
+                    "en-US": "Uptime Kuma Service Status"
+                }
+            },
+            {
+                "key": "uptimeKuma.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "启用 Uptime Kuma 服务状态",
+                    "zh-TW": "啟用 Uptime Kuma 服務狀態",
+                    "en-US": "Enable Uptime Kuma Service Status"
+                },
+                "help": {
+                    "zh-CN": "在节点列表下方显示已发布的 Uptime Kuma Status Page 服务状态。",
+                    "zh-TW": "在節點列表下方顯示已發佈的 Uptime Kuma Status Page 服務狀態。",
+                    "en-US": "Show services from a published Uptime Kuma Status Page below the node list."
+                },
+                "default": false
+            },
+            {
+                "key": "uptimeKuma.baseUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma 基础地址",
+                    "zh-TW": "Uptime Kuma 基礎地址",
+                    "en-US": "Uptime Kuma Base URL"
+                },
+                "help": {
+                    "zh-CN": "例如 https://status.example.com，不要填写 /api 或 /status。",
+                    "zh-TW": "例如 https://status.example.com，不要填寫 /api 或 /status。",
+                    "en-US": "For example, https://status.example.com. Do not include /api or /status."
+                },
+                "default": ""
+            },
+            {
+                "key": "uptimeKuma.slug",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma Status Page slug",
+                    "zh-TW": "Uptime Kuma Status Page slug",
+                    "en-US": "Uptime Kuma Status Page Slug"
+                },
+                "help": {
+                    "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
+                    "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
+                    "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
             }
         ],
         "options": [
@@ -824,6 +895,59 @@
                     "en-US": "When enabled, visitors can see node expiration status."
                 },
                 "default": false
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "Uptime Kuma 服务状态",
+                    "zh-TW": "Uptime Kuma 服務狀態",
+                    "en-US": "Uptime Kuma Service Status"
+                }
+            },
+            {
+                "key": "uptimeKuma.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "启用 Uptime Kuma 服务状态",
+                    "zh-TW": "啟用 Uptime Kuma 服務狀態",
+                    "en-US": "Enable Uptime Kuma Service Status"
+                },
+                "help": {
+                    "zh-CN": "在节点列表下方显示已发布的 Uptime Kuma Status Page 服务状态。",
+                    "zh-TW": "在節點列表下方顯示已發佈的 Uptime Kuma Status Page 服務狀態。",
+                    "en-US": "Show services from a published Uptime Kuma Status Page below the node list."
+                },
+                "default": false
+            },
+            {
+                "key": "uptimeKuma.baseUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma 基础地址",
+                    "zh-TW": "Uptime Kuma 基礎地址",
+                    "en-US": "Uptime Kuma Base URL"
+                },
+                "help": {
+                    "zh-CN": "例如 https://status.example.com，不要填写 /api 或 /status。",
+                    "zh-TW": "例如 https://status.example.com，不要填寫 /api 或 /status。",
+                    "en-US": "For example, https://status.example.com. Do not include /api or /status."
+                },
+                "default": ""
+            },
+            {
+                "key": "uptimeKuma.slug",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma Status Page slug",
+                    "zh-TW": "Uptime Kuma Status Page slug",
+                    "en-US": "Uptime Kuma Status Page Slug"
+                },
+                "help": {
+                    "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
+                    "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
+                    "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
             }
         ],
         "items": [
@@ -1126,6 +1250,59 @@
                     "en-US": "When enabled, visitors can see node expiration status."
                 },
                 "default": false
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "Uptime Kuma 服务状态",
+                    "zh-TW": "Uptime Kuma 服務狀態",
+                    "en-US": "Uptime Kuma Service Status"
+                }
+            },
+            {
+                "key": "uptimeKuma.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "启用 Uptime Kuma 服务状态",
+                    "zh-TW": "啟用 Uptime Kuma 服務狀態",
+                    "en-US": "Enable Uptime Kuma Service Status"
+                },
+                "help": {
+                    "zh-CN": "在节点列表下方显示已发布的 Uptime Kuma Status Page 服务状态。",
+                    "zh-TW": "在節點列表下方顯示已發佈的 Uptime Kuma Status Page 服務狀態。",
+                    "en-US": "Show services from a published Uptime Kuma Status Page below the node list."
+                },
+                "default": false
+            },
+            {
+                "key": "uptimeKuma.baseUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma 基础地址",
+                    "zh-TW": "Uptime Kuma 基礎地址",
+                    "en-US": "Uptime Kuma Base URL"
+                },
+                "help": {
+                    "zh-CN": "例如 https://status.example.com，不要填写 /api 或 /status。",
+                    "zh-TW": "例如 https://status.example.com，不要填寫 /api 或 /status。",
+                    "en-US": "For example, https://status.example.com. Do not include /api or /status."
+                },
+                "default": ""
+            },
+            {
+                "key": "uptimeKuma.slug",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma Status Page slug",
+                    "zh-TW": "Uptime Kuma Status Page slug",
+                    "en-US": "Uptime Kuma Status Page Slug"
+                },
+                "help": {
+                    "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
+                    "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
+                    "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
             }
         ],
         "data": [
@@ -1428,6 +1605,59 @@
                     "en-US": "When enabled, visitors can see node expiration status."
                 },
                 "default": false
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "Uptime Kuma 服务状态",
+                    "zh-TW": "Uptime Kuma 服務狀態",
+                    "en-US": "Uptime Kuma Service Status"
+                }
+            },
+            {
+                "key": "uptimeKuma.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "启用 Uptime Kuma 服务状态",
+                    "zh-TW": "啟用 Uptime Kuma 服務狀態",
+                    "en-US": "Enable Uptime Kuma Service Status"
+                },
+                "help": {
+                    "zh-CN": "在节点列表下方显示已发布的 Uptime Kuma Status Page 服务状态。",
+                    "zh-TW": "在節點列表下方顯示已發佈的 Uptime Kuma Status Page 服務狀態。",
+                    "en-US": "Show services from a published Uptime Kuma Status Page below the node list."
+                },
+                "default": false
+            },
+            {
+                "key": "uptimeKuma.baseUrl",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma 基础地址",
+                    "zh-TW": "Uptime Kuma 基礎地址",
+                    "en-US": "Uptime Kuma Base URL"
+                },
+                "help": {
+                    "zh-CN": "例如 https://status.example.com，不要填写 /api 或 /status。",
+                    "zh-TW": "例如 https://status.example.com，不要填寫 /api 或 /status。",
+                    "en-US": "For example, https://status.example.com. Do not include /api or /status."
+                },
+                "default": ""
+            },
+            {
+                "key": "uptimeKuma.slug",
+                "type": "string",
+                "name": {
+                    "zh-CN": "Uptime Kuma Status Page slug",
+                    "zh-TW": "Uptime Kuma Status Page slug",
+                    "en-US": "Uptime Kuma Status Page Slug"
+                },
+                "help": {
+                    "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
+                    "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
+                    "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
             }
         ]
     }

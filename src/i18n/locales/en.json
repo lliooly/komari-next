@@ -868,6 +868,37 @@
     "grid": "Grid",
     "table": "Table"
   },
+  "uptimeKuma": {
+    "title": "Service status",
+    "summary": "{{up}} / {{total}} services operational",
+    "unavailable": "Uptime Kuma service status is temporarily unavailable.",
+    "retry": "Retry",
+    "status": {
+      "up": "Operational",
+      "down": "Down",
+      "pending": "Pending",
+      "maintenance": "Maintenance",
+      "unknown": "Unknown"
+    },
+    "monitorId": "Monitor {{id}}",
+    "ping": "Latency",
+    "uptime24h": "Uptime 24h",
+    "heartbeatHistory": "Heartbeat history: {{count}} checks",
+    "heartbeatEmpty": "No heartbeat history",
+    "lastHeartbeat": "{{value}} ago",
+    "unknownTime": "Unknown time",
+    "checkedAt": "Last checked: {{value}}",
+    "stale": "Refresh failed; showing the last successful result.",
+    "overall": {
+      "up": "All operational",
+      "degraded": "Some services need attention",
+      "empty": "No services"
+    },
+    "unavailableValue": "—",
+    "empty": "No public services are configured.",
+    "open": "Open status page",
+    "refresh": "Refresh service status"
+  },
   "remainingValue": {
     "title": "Remaining Value Calculator",
     "description": "Check node remaining value and exchange-rate conversions.",

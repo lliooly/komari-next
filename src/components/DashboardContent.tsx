@@ -16,6 +16,7 @@ import Loading from "@/components/loading";
 import { CurrentTimeCard } from "@/components/CurrentTimeCard";
 import { Callouts } from "@/components/DashboardCallouts";
 import { NodeMapView } from "@/components/NodeMapView";
+import UptimeKumaStatus from "@/components/UptimeKumaStatus";
 import { useStatusCardsVisibility } from "@/hooks/useStatusCardsVisibility";
 import { useMounted } from "@/hooks/useMounted";
 
@@ -121,7 +122,7 @@ export default function DashboardContent() {
   const [t] = useTranslation();
   const { live_data } = useLiveData();
   const { publicInfo } = usePublicInfo();
-  const { themeConfig, isThemeLoaded } = useTheme();
+  const { themeConfig, isThemeLoaded, managedThemeSettings } = useTheme();
   
   // Sync document title with backend-set custom title
   useEffect(() => {
@@ -308,6 +309,8 @@ export default function DashboardContent() {
           liveData={live_data?.data ?? { online: [], data: {} }}
         />
       </Suspense>
+
+      <UptimeKumaStatus settings={managedThemeSettings.uptimeKuma} />
     </div>
   );
 }

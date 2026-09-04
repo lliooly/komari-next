@@ -868,6 +868,37 @@
     "grid": "網格",
     "table": "表格"
   },
+  "uptimeKuma": {
+    "title": "服務狀態",
+    "summary": "{{up}} / {{total}} 個服務正常",
+    "unavailable": "暫時無法獲取 Uptime Kuma 服務狀態。",
+    "retry": "重試",
+    "status": {
+      "up": "正常",
+      "down": "故障",
+      "pending": "等待檢測",
+      "maintenance": "維護中",
+      "unknown": "未知"
+    },
+    "monitorId": "監控項 {{id}}",
+    "ping": "延遲",
+    "uptime24h": "24 小時可用率",
+    "heartbeatHistory": "心跳歷史：{{count}} 次檢查",
+    "heartbeatEmpty": "暫無心跳歷史",
+    "lastHeartbeat": "{{value}}前",
+    "unknownTime": "時間未知",
+    "checkedAt": "最近檢查：{{value}}",
+    "stale": "刷新失敗，目前顯示上一次成功結果。",
+    "overall": {
+      "up": "全部正常",
+      "degraded": "部分服務需要關注",
+      "empty": "暫無服務"
+    },
+    "unavailableValue": "—",
+    "empty": "暫無公開服務。",
+    "open": "打開狀態頁",
+    "refresh": "刷新服務狀態"
+  },
   "remainingValue": {
     "title": "剩餘價值計算器",
     "description": "查看節點剩餘價值與匯率換算結果。",

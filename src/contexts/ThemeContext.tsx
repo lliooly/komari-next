@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 import { updateSettings } from "@/lib/api";
+import type { UptimeKumaSettings } from "@/lib/uptimeKuma";
 import i18n, { detectClientLanguage, normalizeLanguage } from "@/i18n/config";
 
 export type ColorTheme = "default" | "ocean" | "sunset" | "forest" | "midnight" | "rose";
@@ -61,6 +62,7 @@ export interface ManagedThemeSettings extends Partial<ThemeConfig> {
   logoUrl?: string;
   statusCardsVisibility?: Partial<StatusCardsVisibility>;
   guestDisplay?: Partial<GuestDisplaySettings>;
+  uptimeKuma?: Partial<UptimeKumaSettings>;
   nodeViewMode?: NodeViewMode;
   appearance?: Appearance;
   language?: string;
@@ -559,6 +561,25 @@ function normalizeGuestDisplaySettings(input: unknown): Partial<GuestDisplaySett
   return result;
 }
 
+function normalizeUptimeKumaSettings(source: Record<string, unknown>): Partial<UptimeKumaSettings> {
+  const result: Partial<UptimeKumaSettings> = {};
+  const enabled = pickBoolean(readDottedValue(source, "uptimeKuma.enabled"));
+  const baseUrl = pickString(readDottedValue(source, "uptimeKuma.baseUrl"));
+  const slug = pickString(readDottedValue(source, "uptimeKuma.slug"));
+
+  if (enabled !== undefined) {
+    result.enabled = enabled;
+  }
+  if (baseUrl !== undefined) {
+    result.baseUrl = baseUrl.trim();
+  }
+  if (slug !== undefined) {
+    result.slug = slug.trim();
+  }
+
+  return result;
+}
+
 function normalizeManagedThemeSettings(input: unknown): ManagedThemeSettings {
   const source = parseThemeSettings(input);
   const result: ManagedThemeSettings = normalizeThemeConfigOverrides(source);
@@ -569,6 +590,7 @@ function normalizeManagedThemeSettings(input: unknown): ManagedThemeSettings {
   const statusCardsVisibility: Partial<StatusCardsVisibility> = {};
   const guestDisplay: Partial<GuestDisplaySettings> =
     normalizeGuestDisplaySettings(readDottedValue(source, "guestDisplay"));
+  const uptimeKuma = normalizeUptimeKumaSettings(source);
 
   (Object.keys(DEFAULT_STATUS_CARDS_VISIBILITY) as Array<keyof StatusCardsVisibility>).forEach((key) => {
     const value = pickBoolean(readDottedValue(source, `statusCardsVisibility.${key}`));
@@ -590,6 +612,10 @@ function normalizeManagedThemeSettings(input: unknown): ManagedThemeSettings {
 
   if (Object.keys(guestDisplay).length > 0) {
     result.guestDisplay = guestDisplay;
+  }
+
+  if (Object.keys(uptimeKuma).length > 0) {
+    result.uptimeKuma = uptimeKuma;
   }
 
   if (logoUrl !== undefined) {
@@ -737,6 +763,17 @@ function mergeManagedSettings(
     next.guestDisplay = {
       ...(isRecord(next.guestDisplay) ? next.guestDisplay : {}),
       ...patch.guestDisplay,
+    };
+  }
+
+  if (patch.uptimeKuma) {
+    Object.keys(patch.uptimeKuma).forEach((key) => {
+      delete next[`uptimeKuma.${key}`];
+    });
+
+    next.uptimeKuma = {
+      ...(isRecord(next.uptimeKuma) ? next.uptimeKuma : {}),
+      ...patch.uptimeKuma,
     };
   }
 

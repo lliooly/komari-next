@@ -22,7 +22,7 @@
 2. 服务区域使用当前主题的卡片、徽章、语义颜色和响应式布局，不直接复制 Kuma 的视觉样式。
 3. 每个公开服务展示名称、当前状态、当前延迟和 24 小时可用率。
 4. 展示服务总体状态，例如「全部正常」「存在异常」或「暂无数据」。
-5. 提供可折叠的完整 Kuma Status Page；用户可以查看 Kuma 自带的历史图表、事件记录和说明，也可以直接新窗口打开。
+5. 在每个服务下方展示 Kuma 心跳历史条，并提供直接打开完整 Kuma Status Page 的外链入口。
 6. 通过 Komari 主题管理设置配置 Kuma 地址和 Status Page slug，默认关闭，不影响未配置 Kuma 的现有用户。
 7. Kuma 请求失败时不影响 Komari 节点数据和页面其他区域。
 8. Komari 与 Kuma 位于不同机器时功能仍然正常，不要求合并部署。
@@ -38,7 +38,7 @@
 
 ## 方案决策
 
-采用「API 驱动的原生服务列表 + 可选的完整 Status Page」组合方案。
+采用 API 驱动的原生服务列表方案，并通过外链保留完整 Status Page 入口。
 
 ### 原生服务列表
 
@@ -49,25 +49,21 @@ GET {kumaBaseUrl}/api/status-page/{slug}
 GET {kumaBaseUrl}/api/status-page/heartbeat/{slug}
 ```
 
-第一个接口提供 Status Page 配置、分组和公开 Monitor 列表；第二个接口提供 Monitor 的最新心跳和可用率。前端在适配层中按 Monitor ID 合并两个响应，避免组件直接依赖 Kuma 原始响应结构。
+第一个接口提供 Status Page 配置、分组和公开 Monitor 列表；第二个接口提供 Monitor 的心跳历史、最新心跳和可用率。前端在适配层中按 Monitor ID 合并两个响应，避免组件直接依赖 Kuma 原始响应结构。
 
 Uptime Kuma 官方资料说明，Status Page 接口主要供 Kuma 自身使用，第三方集成可能受到版本变更影响；公开 Status Page 默认还可能缓存约 5 分钟。因此接口调用集中在独立适配层，服务区域使用分钟级刷新和手动刷新，不复用 Komari 约 2 秒的实时轮询。
 
 参考：[Uptime Kuma API Documentation](https://github.com/louislam/uptime-kuma/wiki/API-Documentation/692198f84f3675a53a8ece7eb91a6a84566ee98e)、[Uptime Kuma Status Page](https://github.com/louislam/uptime-kuma/wiki/Status-Page)。
 
-### 完整 Status Page
+### 完整 Status Page 外链
 
-服务区域下方提供折叠内容，地址由以下规则生成：
+服务区域标题右侧提供小型外链按钮，地址由以下规则生成：
 
 ```text
 {kumaBaseUrl}/status/{slug}
 ```
 
-折叠内容默认延迟加载 iframe，避免首页初始加载额外的 Kuma 页面资源；同时始终提供「在新窗口打开」链接作为可靠入口。如果 Kuma 响应头禁止跨域 iframe，原生服务列表仍然可用，用户通过新窗口链接查看完整页面。
-
-Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true`；该设置会降低同源保护并增加点击劫持风险，所以 iframe 不是服务列表的必要依赖，必须保留新窗口回退入口。
-
-参考：[Uptime Kuma Status Page：iframe 说明](https://github.com/louislam/uptime-kuma/wiki/Status-Page)。
+外链在新窗口打开完整页面，原生服务列表不依赖跨站 iframe，也不需要调整 Kuma 的 frame 安全设置。
 
 ## 配置设计
 
@@ -78,8 +74,7 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
   "uptimeKuma": {
     "enabled": false,
     "baseUrl": "https://status.example.com",
-    "slug": "main",
-    "showEmbeddedPage": true
+    "slug": "main"
   }
 }
 ```
@@ -91,7 +86,6 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
 | `uptimeKuma.enabled` | `boolean` | `false` | 是否在首页显示 Kuma 服务区域 |
 | `uptimeKuma.baseUrl` | `string` | `""` | Kuma 实例基础地址，不包含 `/api`、`/status` 或末尾 `/` |
 | `uptimeKuma.slug` | `string` | `""` | 已发布的 Status Page slug |
-| `uptimeKuma.showEmbeddedPage` | `boolean` | `true` | 是否显示可折叠的完整 Status Page 区域 |
 
 配置校验规则：
 
@@ -118,7 +112,7 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
 1. 生成 Status Page 和心跳接口地址。
 2. 发起不带凭据的 `GET` 请求，并检查 HTTP 状态码。
 3. 校验并规范化 Status Page 响应和 heartbeat 响应。
-4. 根据 Monitor ID 合并名称、分组、状态、延迟和可用率。
+4. 根据 Monitor ID 合并名称、分组、状态、延迟、可用率和心跳历史。
 5. 对未知字段、未知状态和不完整数据提供安全默认值。
 
 适配层向组件输出稳定的内部类型，不让 UI 依赖 Kuma 的 `publicGroupList`、`heartbeatList` 等原始字段名。
@@ -144,7 +138,7 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
 - 使用分钟级定时刷新；定时请求进行防并发保护。
 - 已经有成功数据后，刷新失败保留上一次数据，并显示过期或错误提示；首次失败则显示空状态。
 
-默认刷新间隔设为 5 分钟，与公开 Status Page 的缓存特性一致；不新增可调刷新间隔字段，避免管理员设置一个实际上不会改变 Kuma 缓存结果的数值。
+默认刷新间隔设为 120 秒，与 Kuma Status Page 的刷新设置保持一致；不新增可调刷新间隔字段，避免增加重复配置。
 
 ### 页面组件
 
@@ -154,8 +148,8 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
 
 1. 区域标题：服务状态、服务数量、总体状态、最近检查时间和刷新按钮。
 2. 服务分组：沿用 Kuma Status Page 的公开分组顺序。
-3. 服务行或卡片：服务名、状态徽章、延迟、24 小时可用率。
-4. 完整页面入口：折叠面板中的 lazy iframe，以及新窗口打开链接。
+3. 服务行或卡片：服务名、心跳历史条、状态徽章、延迟、24 小时可用率。
+4. 完整页面入口：标题区域的新窗口外链按钮。
 
 组件使用现有 `Card`、`Badge`、`Button` 和 Tailwind 语义类，不新增独立颜色系统。状态颜色建议使用：正常为绿色、故障为红色、维护或等待为黄色、未知为灰色。
 
@@ -167,7 +161,7 @@ Uptime Kuma 官方说明，跨站 iframe 可能需要设置 `UPTIME_KUMA_DISABLE
 - 没有公开服务：总体为「暂无服务数据」。
 - 请求或配置失败：总体为「暂时无法获取」，不归因于 Monitor 故障。
 
-服务名称、状态文字和分组名称全部按普通文本渲染，不使用 `dangerouslySetInnerHTML`。外部 URL 只用于已校验的 Kuma 页面链接和 iframe `src`。
+服务名称、状态文字和分组名称全部按普通文本渲染，不使用 `dangerouslySetInnerHTML`。外部 URL 只用于已校验的 Kuma 页面链接。
 
 ## 跨域与部署约束
 
@@ -183,7 +177,7 @@ Komari 和 Kuma 位于两台机器不会造成架构问题，反而能保持监�
 - Status Page 结构缺字段：保留可识别的服务，缺失字段使用 `—` 或 `unknown`。
 - 未知状态值：按 `unknown` 渲染，不能默认视为正常或故障。
 - Kuma 接口版本变化：只需要调整 `uptimeKuma.ts` 适配层，不修改 UI 组件。
-- iframe 被 `X-Frame-Options` 或 CSP 拒绝：原生列表不受影响，新窗口链接仍然可用。
+- 完整 Status Page 的外链无法打开：原生服务列表不受影响。
 - Kuma 服务本身不可用：只影响 Kuma 区域，不阻塞 Komari 节点状态、登录和主题设置。
 
 ## 验证计划
@@ -195,9 +189,9 @@ Komari 和 Kuma 位于两台机器不会造成架构问题，反而能保持监�
 3. 验证 `enabled=false` 时无网络请求，`enabled=true` 时只请求两个公开接口。
 4. 验证接口失败不会把所有服务显示为 `down`，并且不会阻塞节点区域。
 5. 验证轮询期间不会产生并发请求，组件卸载后不会更新状态。
-6. 验证空配置、CORS 失败、404、部分 Monitor 缺心跳、维护状态和 iframe 被拒绝等场景。
+6. 验证空配置、CORS 失败、404、部分 Monitor 缺心跳和维护状态等场景。
 7. 执行 TypeScript 检查和生产构建，确认静态导出正常。
-8. 在桌面和移动宽度下检查服务列表、分组、状态徽章、折叠区域和新窗口链接布局。
+8. 在桌面和移动宽度下检查服务列表、分组、状态徽章、心跳历史条和外链按钮布局。
 
 ## 影响范围
 
