@@ -4,6 +4,13 @@
     "manage": "Manage announcement",
     "content": "Announcement content",
     "enabled": "Enable announcement",
+    "textColor": "Announcement text color",
+    "colors": {
+      "white": "White",
+      "green": "Green",
+      "yellow": "Yellow",
+      "red": "Red"
+    },
     "statusLabel": "Published status",
     "status": {
       "disabled": "Disabled",

@@ -51,8 +51,8 @@ const NavBar = () => {
   const showCustomLogo = Boolean(logoUrl) && !logoLoadFailed;
 
   return (
-    <nav className="w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm">
-      <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
+    <nav className="w-full rounded-2xl border-0 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm">
+      <div className="flex h-16 items-center justify-between px-4 md:h-20">
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
           <SpaLink href="/" className="flex items-center gap-3 hover:opacity-80 transition-all">

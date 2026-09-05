@@ -4,6 +4,13 @@
     "manage": "公告管理",
     "content": "公告內容",
     "enabled": "開啟公告",
+    "textColor": "公告文字顏色",
+    "colors": {
+      "white": "白色",
+      "green": "綠色",
+      "yellow": "黃色",
+      "red": "紅色"
+    },
     "statusLabel": "已發佈狀態",
     "status": {
       "disabled": "已關閉",

@@ -171,6 +171,12 @@
     }
   },
   "announcement": {
+    "colors": {
+      "green": "绿色",
+      "red": "红色",
+      "white": "白色",
+      "yellow": "黄色"
+    },
     "content": "公告内容",
     "description": "公告在指定时间段内与导航栏共同置顶；到期自动隐藏，保留内容和时间供下次编辑。",
     "disableNow": "立即关闭",
@@ -193,6 +199,7 @@
       "scheduled": "待展示"
     },
     "statusLabel": "已发布状态",
+    "textColor": "公告文字颜色",
     "timezone": "时间按 {{timezone}} 输入，访客在同一时刻看到公告。",
     "title": "公告",
     "validation": "请填写公告内容及有效的开始、结束时间；结束时间必须晚于开始时间和当前时间。"

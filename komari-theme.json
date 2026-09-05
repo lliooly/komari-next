@@ -266,6 +266,18 @@
                 "type": "text",
                 "label": "Announcement end time",
                 "default": ""
+            },
+            {
+                "key": "announcement.textColor",
+                "type": "option",
+                "label": "Announcement text color",
+                "options": [
+                    "white",
+                    "green",
+                    "yellow",
+                    "red"
+                ],
+                "default": "yellow"
             }
         ],
         "fields": [
@@ -684,6 +696,22 @@
                     "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
+            },
+            {
+                "key": "announcement.textColor",
+                "type": "select",
+                "name": {
+                    "zh-CN": "公告文字颜色",
+                    "zh-TW": "公告文字顏色",
+                    "en-US": "Announcement text color"
+                },
+                "help": {
+                    "zh-CN": "仅支持白色、绿色、黄色和红色。",
+                    "zh-TW": "僅支援白色、綠色、黃色和紅色。",
+                    "en-US": "Only white, green, yellow and red are supported."
+                },
+                "default": "yellow",
+                "options": "white,green,yellow,red"
             }
         ],
         "options": [
@@ -1098,6 +1126,22 @@
                     "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
+            },
+            {
+                "key": "announcement.textColor",
+                "type": "select",
+                "name": {
+                    "zh-CN": "公告文字颜色",
+                    "zh-TW": "公告文字顏色",
+                    "en-US": "Announcement text color"
+                },
+                "help": {
+                    "zh-CN": "仅支持白色、绿色、黄色和红色。",
+                    "zh-TW": "僅支援白色、綠色、黃色和紅色。",
+                    "en-US": "Only white, green, yellow and red are supported."
+                },
+                "default": "yellow",
+                "options": "white,green,yellow,red"
             }
         ],
         "items": [
@@ -1516,6 +1560,22 @@
                     "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
+            },
+            {
+                "key": "announcement.textColor",
+                "type": "select",
+                "name": {
+                    "zh-CN": "公告文字颜色",
+                    "zh-TW": "公告文字顏色",
+                    "en-US": "Announcement text color"
+                },
+                "help": {
+                    "zh-CN": "仅支持白色、绿色、黄色和红色。",
+                    "zh-TW": "僅支援白色、綠色、黃色和紅色。",
+                    "en-US": "Only white, green, yellow and red are supported."
+                },
+                "default": "yellow",
+                "options": "white,green,yellow,red"
             }
         ],
         "data": [
@@ -1934,6 +1994,22 @@
                     "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
+            },
+            {
+                "key": "announcement.textColor",
+                "type": "select",
+                "name": {
+                    "zh-CN": "公告文字颜色",
+                    "zh-TW": "公告文字顏色",
+                    "en-US": "Announcement text color"
+                },
+                "help": {
+                    "zh-CN": "仅支持白色、绿色、黄色和红色。",
+                    "zh-TW": "僅支援白色、綠色、黃色和紅色。",
+                    "en-US": "Only white, green, yellow and red are supported."
+                },
+                "default": "yellow",
+                "options": "white,green,yellow,red"
             }
         ]
     }

@@ -20,9 +20,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground min-h-screen flex flex-col transition-colors duration-300">
         <Providers>
-          <header className="sticky top-0 z-50 w-full shrink-0">
-            <NavBar />
-            <AnnouncementBanner />
+          <header className="sticky top-0 z-50 w-full shrink-0 px-3 pt-3 sm:px-4">
+            <div className="container mx-auto flex flex-col gap-3">
+              <NavBar />
+              <AnnouncementBanner />
+            </div>
           </header>
           <main className="flex-1 py-4 md:py-12">
             {children}

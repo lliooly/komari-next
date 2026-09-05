@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, X } from "lucide-react";
+import { Check, LoaderCircle, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { ActionFeedbackStatus } from "@/hooks/useActionFeedback";
@@ -21,7 +21,13 @@ export function ActionFeedbackIcon({
   className,
   ...iconProps
 }: ActionFeedbackIconProps) {
-  const Icon = status === "success" ? SuccessIcon : status === "error" ? ErrorIcon : IdleIcon;
+  const Icon = status === "loading"
+    ? LoaderCircle
+    : status === "success"
+      ? SuccessIcon
+      : status === "error"
+        ? ErrorIcon
+        : IdleIcon;
   const stateClassName =
     status === "loading"
       ? "action-feedback-icon__item--loading"

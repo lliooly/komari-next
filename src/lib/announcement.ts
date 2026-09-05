@@ -1,8 +1,13 @@
+export const ANNOUNCEMENT_TEXT_COLORS = ["white", "green", "yellow", "red"] as const;
+export type AnnouncementTextColor = (typeof ANNOUNCEMENT_TEXT_COLORS)[number];
+export const DEFAULT_ANNOUNCEMENT_TEXT_COLOR: AnnouncementTextColor = "yellow";
+
 export interface Announcement {
   enabled: boolean;
   content: string;
   startsAt: string;
   endsAt: string;
+  textColor: AnnouncementTextColor;
 }
 
 export const EMPTY_ANNOUNCEMENT: Announcement = {
@@ -10,6 +15,7 @@ export const EMPTY_ANNOUNCEMENT: Announcement = {
   content: "",
   startsAt: "",
   endsAt: "",
+  textColor: DEFAULT_ANNOUNCEMENT_TEXT_COLOR,
 };
 
 export function parseSettings(value: unknown): Record<string, unknown> {
@@ -26,12 +32,25 @@ export function readAnnouncement(settings: unknown): Announcement {
   const field = (key: keyof Announcement) => nested[key] ?? raw[`announcement.${key}`];
   const string = (key: keyof Announcement) =>
     typeof field(key) === "string" ? (field(key) as string).trim() : "";
+  const textColor = field("textColor");
   return {
     enabled: field("enabled") === true,
     content: string("content"),
     startsAt: string("startsAt"),
     endsAt: string("endsAt"),
+    textColor: typeof textColor === "string" && (ANNOUNCEMENT_TEXT_COLORS as readonly string[]).includes(textColor)
+      ? textColor as AnnouncementTextColor
+      : DEFAULT_ANNOUNCEMENT_TEXT_COLOR,
   };
+}
+
+export function getAnnouncementTextColorClass(color: AnnouncementTextColor): string {
+  return {
+    white: "text-white",
+    green: "text-green-500 dark:text-green-400",
+    yellow: "text-yellow-500 dark:text-yellow-400",
+    red: "text-red-500 dark:text-red-400",
+  }[color];
 }
 
 // Require an explicit timezone so every visitor sees the same scheduled interval.

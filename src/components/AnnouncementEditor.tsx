@@ -10,9 +10,26 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnnouncement } from "@/contexts/AnnouncementContext";
-import { announcementStatus, localDateTime, type Announcement } from "@/lib/announcement";
+import {
+  announcementStatus,
+  getAnnouncementTextColorClass,
+  localDateTime,
+  type Announcement,
+  type AnnouncementTextColor,
+} from "@/lib/announcement";
 import { updateThemeSettings } from "@/lib/themeSettings";
+import { cn } from "@/lib/utils";
 import AnnouncementMarkdown from "./AnnouncementMarkdown";
+
+const announcementTextColorOptions: ReadonlyArray<{
+  value: AnnouncementTextColor;
+  swatchClassName: string;
+}> = [
+  { value: "white", swatchClassName: "border border-border bg-white" },
+  { value: "green", swatchClassName: "bg-green-500" },
+  { value: "yellow", swatchClassName: "bg-yellow-500" },
+  { value: "red", swatchClassName: "bg-red-500" },
+];
 
 function EditorForm() {
   const { announcement, accept, now } = useAnnouncement();
@@ -21,6 +38,7 @@ function EditorForm() {
   const [content, setContent] = useState(announcement.content);
   const [start, setStart] = useState(localDateTime(announcement.startsAt));
   const [end, setEnd] = useState(localDateTime(announcement.endsAt));
+  const [textColor, setTextColor] = useState(announcement.textColor);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -38,6 +56,7 @@ function EditorForm() {
       enabled, content: content.trim(),
       startsAt: Number.isFinite(starts) ? new Date(starts).toISOString() : "",
       endsAt: Number.isFinite(ends) ? new Date(ends).toISOString() : "",
+      textColor,
     };
     setSaving(true);
     try {
@@ -70,8 +89,31 @@ function EditorForm() {
         <div className="min-w-0 space-y-2"><label htmlFor="announcement-end">{t("announcement.endsAt")}</label><Input id="announcement-end" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
       </div>
       <div className="space-y-2">
+        <span className="block">{t("announcement.textColor")}</span>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {announcementTextColorOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={textColor === option.value}
+              className={cn(
+                "flex min-w-0 items-center justify-center gap-2 rounded-lg bg-muted/50 px-2 py-2 text-xs text-foreground transition-colors hover:bg-muted",
+                textColor === option.value && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+              )}
+              onClick={() => setTextColor(option.value)}
+            >
+              <span aria-hidden="true" className={cn("h-3 w-3 shrink-0 rounded-full", option.swatchClassName)} />
+              <span className="truncate">{t(`announcement.colors.${option.value}`)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
         <h3 className="font-medium">{t("announcement.preview")}</h3>
-        <div className="announcement-banner rounded-lg p-3">
+        <div className={cn(
+          "announcement-banner rounded-lg border-0 bg-background/80 p-3 backdrop-blur-md supports-[backdrop-filter]:bg-background/60",
+          getAnnouncementTextColorClass(textColor),
+        )}>
           <div className="announcement-scroll overflow-auto" tabIndex={0} role="region" aria-label={t("announcement.preview")}>
             {content.trim() ? <AnnouncementMarkdown content={content} /> : <p className="text-sm">{t("announcement.previewEmpty")}</p>}
           </div>

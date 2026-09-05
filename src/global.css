@@ -2,9 +2,7 @@
 @import "tw-animate-css";
 
 .announcement-banner {
-  background: color-mix(in srgb, var(--background) 94%, #d97706);
-  color: var(--foreground);
-  box-shadow: 0 1px 0 color-mix(in srgb, #d97706 28%, transparent);
+  border: 0;
 }
 .announcement-scroll { max-height: min(30dvh, 16rem); scrollbar-gutter: stable; }
 .announcement-markdown { font-size: 0.875rem; line-height: 1.6; overflow-wrap: anywhere; }
