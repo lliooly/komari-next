@@ -97,6 +97,8 @@ function formatCompactDuration(durationMs: number): string {
   return `${Math.floor(hours / 24)}d`;
 }
 
+const MAX_HEARTBEAT_SEGMENTS = 60;
+
 function heartbeatSegmentClass(status: UptimeKumaServiceStatus): string {
   switch (status) {
     case "up":
@@ -121,7 +123,11 @@ function HeartbeatBar({
   unavailableLabel: string;
   t: TFunction;
 }) {
-  const visibleHeartbeats = service.heartbeats.slice(-60);
+  const visibleHeartbeats = service.heartbeats.slice(-MAX_HEARTBEAT_SEGMENTS);
+  const missingHeartbeatCount = Math.max(
+    0,
+    MAX_HEARTBEAT_SEGMENTS - visibleHeartbeats.length
+  );
   const oldestTimestamp = service.heartbeats.find(
     (heartbeat) => heartbeat.timestamp !== null
   )?.timestamp;
@@ -154,6 +160,13 @@ function HeartbeatBar({
             count: service.heartbeats.length,
           })}
         >
+          {Array.from({ length: missingHeartbeatCount }, (_, index) => (
+            <span
+              key={`missing-${index}`}
+              aria-hidden="true"
+              className="block h-full min-w-[3px] flex-1 rounded-full bg-muted-foreground/35 dark:bg-muted-foreground/45"
+            />
+          ))}
           {visibleHeartbeats.map((heartbeat, index) => (
             <span
               key={`${heartbeat.timestamp ?? "unknown"}-${index}`}
