@@ -29,6 +29,7 @@ import {
 } from '@/hooks/useStatusCardsVisibility';
 import { useNodeViewMode } from '@/hooks/useNodeViewMode';
 import { cn } from '@/lib/utils';
+import AnnouncementEditor from './AnnouncementEditor';
 
 const ThemeSwitcher = () => {
   const {
@@ -215,6 +216,7 @@ const ThemeSwitcher = () => {
       </PopoverTrigger>
       <PopoverContent className="w-80 max-h-[85vh] overflow-y-auto p-4" align="end" sideOffset={8}>
         <div className="flex flex-col gap-4">
+          <AnnouncementEditor />
           <div>
             <h4 className="font-semibold text-sm mb-3 flex items-center gap-2 sticky -top-4 bg-popover pb-2 z-10 -mx-4 px-4 pt-4">
               <Palette className="h-4 w-4" />

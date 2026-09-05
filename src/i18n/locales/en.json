@@ -1,4 +1,31 @@
 {
+  "announcement": {
+    "title": "Announcement",
+    "manage": "Manage announcement",
+    "content": "Announcement content",
+    "enabled": "Enable announcement",
+    "statusLabel": "Published status",
+    "status": {
+      "disabled": "Disabled",
+      "invalid": "Invalid configuration",
+      "expired": "Expired",
+      "scheduled": "Scheduled",
+      "active": "Active"
+    },
+    "validation": "Enter content and valid start/end times. End must be later than start and the current time.",
+    "saved": "Saved. Visitor pages sync within 30 seconds.",
+    "saveFailed": "Save failed; the announcement was not published. Check your connection or sign-in status and retry.",
+    "markdownHelp": "Supports Markdown headings, lists, links and tables. HTML and images are disabled.",
+    "timezone": "Enter times in {{timezone}}. All visitors see the announcement at the same instant.",
+    "startsAt": "Start time",
+    "endsAt": "End time",
+    "preview": "Preview before publishing",
+    "previewEmpty": "Enter content to preview it here",
+    "save": "Save announcement",
+    "saving": "Saving…",
+    "disableNow": "Disable now",
+    "description": "The announcement stays pinned with the navigation during its scheduled interval. It hides at expiry; content and times are retained for editing."
+  },
   "about": {
     "ai": "The development process of the Komari project has been assisted by artificial intelligence tools. These tools are used for tasks such as code generation, refactoring, and debugging to improve development efficiency and code quality. All AI-generated code and suggestions have been reviewed and validated by human developers.",
     "open_source": "Komari is open source under the MIT license and is built using the following open source software:",

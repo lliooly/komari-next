@@ -137,6 +137,14 @@ These settings can improve navigation smoothness, make deployments more compatib
 
 ## Theme Development
 
+### Scheduled announcements
+
+Configure Announcement in the Komari admin theme settings: enable it, enter Markdown, and set start/end timestamps with a timezone, such as `2026-09-05T18:00:00+08:00`. Alternatively, sign in on the frontend and open Theme settings → Manage announcement for date/time pickers, live preview and a Disable now button.
+
+The announcement stays pinned below navigation on the dashboard and instance pages. Long content scrolls inside the banner. Headings, lists, links, code and tables are supported; HTML and images are disabled. The banner hides at expiry while retaining its configuration. Empty content and invalid schedules remain hidden.
+
+Open pages sync settings every 30 seconds, subject to network latency. Scheduling relies on the visitor device clock. This banner does not replace a separately hosted maintenance page during a full site outage.
+
 This repository is designed to be used as a custom Komari theme.
 
 1. Configure and customize the UI as needed.

@@ -170,6 +170,33 @@
       "traffic_description": "Komari将会在服务器到达指定的流量使用百分比时发送通知，并以5%为梯度持续提醒。如果服务器没有设置流量阈值，不发送通知。设置为0禁用流量提醒。"
     }
   },
+  "announcement": {
+    "content": "公告内容",
+    "description": "公告在指定时间段内与导航栏共同置顶；到期自动隐藏，保留内容和时间供下次编辑。",
+    "disableNow": "立即关闭",
+    "enabled": "开启公告",
+    "endsAt": "结束时间",
+    "manage": "公告管理",
+    "markdownHelp": "支持 Markdown 标题、列表、链接和表格；禁用 HTML 和图片。",
+    "preview": "发布前预览",
+    "previewEmpty": "输入内容后在此预览",
+    "save": "保存公告",
+    "saved": "保存成功，访客页面将在 30 秒内同步。",
+    "saveFailed": "保存失败，公告未发布。请检查网络或登录状态后重试。",
+    "saving": "保存中…",
+    "startsAt": "开始时间",
+    "status": {
+      "active": "展示中",
+      "disabled": "已关闭",
+      "expired": "已过期",
+      "invalid": "配置无效",
+      "scheduled": "待展示"
+    },
+    "statusLabel": "已发布状态",
+    "timezone": "时间按 {{timezone}} 输入，访客在同一时刻看到公告。",
+    "title": "公告",
+    "validation": "请填写公告内容及有效的开始、结束时间；结束时间必须晚于开始时间和当前时间。"
+  },
   "chart": {
     "avg": "平均值",
     "connections": "连接数",

@@ -11,7 +11,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useTheme as useNextTheme } from "next-themes";
-import { updateSettings } from "@/lib/api";
+import { updateThemeSettings } from "@/lib/themeSettings";
 import type { UptimeKumaSettings } from "@/lib/uptimeKuma";
 import i18n, { detectClientLanguage, normalizeLanguage } from "@/i18n/config";
 
@@ -919,7 +919,14 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         queuedSaveRef.current = null;
 
         try {
-          await updateSettings({ theme_settings: value });
+          await updateThemeSettings((current) => {
+            // Announcements are managed independently, never overwrite them
+            // with this provider's initial public-settings snapshot.
+            const themeOnly = Object.fromEntries(Object.entries(value).filter(
+              ([key]) => key !== "announcement" && !key.startsWith("announcement.")
+            ));
+            return { ...current, ...themeOnly };
+          });
         } catch (error) {
           console.warn("Failed to save theme settings:", error);
         }

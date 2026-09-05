@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { ThemeProvider } from "@/contexts/ThemeContext"
+import { AnnouncementProvider } from "@/contexts/AnnouncementContext"
 import { RPC2Provider } from "@/contexts/RPC2Context"
 import { PublicInfoProvider } from "@/contexts/PublicInfoContext"
 import { NodeListProvider } from "@/contexts/NodeListContext"
@@ -34,19 +35,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <I18nClientLanguageSync />
       <ThemeProvider>
-        <RPC2Provider>
-          <PublicInfoProvider>
-            <NodeListProvider>
-              <LiveDataProvider>
-                {children}
-                <Toaster />
-                <OfflineIndicator />
-                <PWAInstallPrompt />
-                <PWAUpdatePrompt />
-              </LiveDataProvider>
-            </NodeListProvider>
-          </PublicInfoProvider>
-        </RPC2Provider>
+        <AnnouncementProvider>
+          <RPC2Provider>
+            <PublicInfoProvider>
+              <NodeListProvider>
+                <LiveDataProvider>
+                  {children}
+                  <Toaster />
+                  <OfflineIndicator />
+                  <PWAInstallPrompt />
+                  <PWAUpdatePrompt />
+                </LiveDataProvider>
+              </NodeListProvider>
+            </PublicInfoProvider>
+          </RPC2Provider>
+        </AnnouncementProvider>
       </ThemeProvider>
     </NextThemesProvider>
   )

@@ -51,7 +51,7 @@ const NavBar = () => {
   const showCustomLogo = Boolean(logoUrl) && !logoLoadFailed;
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm">
+    <nav className="w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm">
       <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
         {/* Logo and Title */}
         <div className="flex items-center gap-2">

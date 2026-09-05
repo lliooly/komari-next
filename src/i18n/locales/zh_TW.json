@@ -1,4 +1,31 @@
 {
+  "announcement": {
+    "title": "公告",
+    "manage": "公告管理",
+    "content": "公告內容",
+    "enabled": "開啟公告",
+    "statusLabel": "已發佈狀態",
+    "status": {
+      "disabled": "已關閉",
+      "invalid": "設定無效",
+      "expired": "已過期",
+      "scheduled": "待顯示",
+      "active": "顯示中"
+    },
+    "validation": "請填寫公告內容及有效的開始、結束時間；結束時間必須晚於開始時間和目前時間。",
+    "saved": "儲存成功，訪客頁面將在 30 秒內同步。",
+    "saveFailed": "儲存失敗，公告未發佈。請檢查網路或登入狀態後重試。",
+    "markdownHelp": "支援 Markdown 標題、列表、連結和表格；停用 HTML 和圖片。",
+    "timezone": "時間依 {{timezone}} 輸入，訪客在同一時刻看到公告。",
+    "startsAt": "開始時間",
+    "endsAt": "結束時間",
+    "preview": "發佈前預覽",
+    "previewEmpty": "輸入內容後在此預覽",
+    "save": "儲存公告",
+    "saving": "儲存中…",
+    "disableNow": "立即關閉",
+    "description": "公告在指定時段內與導覽列共同置頂；到期自動隱藏，保留內容和時間供下次編輯。"
+  },
   "about": {
     "ai": "Komari 專案的開發過程得到了人工智慧工具的輔助。這些工具被用於執行程式碼生成、重構和除錯等任務，以提高開發效率和程式碼品質。所有由 AI 生成的程式碼和建議都經過了人類開發者的審查與驗證。",
     "open_source": "Komari 基於 MIT 協議開源，並使用了以下開源軟體構建：",

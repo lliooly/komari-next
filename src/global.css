@@ -1,6 +1,27 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.announcement-banner {
+  background: color-mix(in srgb, var(--background) 94%, #d97706);
+  color: var(--foreground);
+  box-shadow: 0 1px 0 color-mix(in srgb, #d97706 28%, transparent);
+}
+.announcement-scroll { max-height: min(30dvh, 16rem); scrollbar-gutter: stable; }
+.announcement-markdown { font-size: 0.875rem; line-height: 1.6; overflow-wrap: anywhere; }
+.announcement-markdown > :first-child { margin-top: 0; }
+.announcement-markdown > :last-child { margin-bottom: 0; }
+.announcement-markdown :is(p, ul, ol, blockquote, pre, table) { margin-block: 0.5em; }
+.announcement-markdown :is(h1, h2, h3, h4, h5, h6) { font-size: 1rem; font-weight: 650; margin-block: 0.6em 0.3em; }
+.announcement-markdown ul { list-style: disc; padding-left: 1.5em; }
+.announcement-markdown ol { list-style: decimal; padding-left: 1.5em; }
+.announcement-markdown a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.announcement-markdown :is(a, code) { overflow-wrap: anywhere; }
+.announcement-markdown blockquote { border-left: 3px solid currentColor; padding-left: 0.75em; }
+.announcement-markdown pre { overflow-x: auto; background: var(--muted); padding: 0.5em; border-radius: 0.375rem; }
+.announcement-markdown :is(th, td) { border: 1px solid var(--border); padding: 0.25em 0.5em; text-align: start; }
+.announcement-markdown table { border-collapse: collapse; }
+.announcement-markdown hr { margin-block: 0.75em; border-color: var(--border); }
+
 .action-feedback-icon__item {
   transform-origin: center;
 }

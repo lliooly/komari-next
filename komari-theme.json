@@ -242,6 +242,30 @@
                 "type": "text",
                 "label": "Uptime Kuma status page slug",
                 "default": ""
+            },
+            {
+                "key": "announcement.enabled",
+                "type": "bool",
+                "label": "Enable announcement",
+                "default": false
+            },
+            {
+                "key": "announcement.content",
+                "type": "text",
+                "label": "Announcement content (Markdown)",
+                "default": ""
+            },
+            {
+                "key": "announcement.startsAt",
+                "type": "text",
+                "label": "Announcement start time",
+                "default": ""
+            },
+            {
+                "key": "announcement.endsAt",
+                "type": "text",
+                "label": "Announcement end time",
+                "default": ""
             }
         ],
         "fields": [
@@ -597,6 +621,69 @@
                     "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
                 },
                 "default": ""
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "公告",
+                    "zh-TW": "公告",
+                    "en-US": "Announcement"
+                }
+            },
+            {
+                "key": "announcement.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "开启公告",
+                    "zh-TW": "開啟公告",
+                    "en-US": "Enable announcement"
+                },
+                "default": false
+            },
+            {
+                "key": "announcement.content",
+                "type": "text",
+                "name": {
+                    "zh-CN": "公告内容（Markdown）",
+                    "zh-TW": "公告內容（Markdown）",
+                    "en-US": "Announcement content (Markdown)"
+                },
+                "help": {
+                    "zh-CN": "支持标题、列表、链接；不支持 HTML 和图片。登录前台后，在主题设置的公告管理中可编辑并预览。",
+                    "zh-TW": "支援標題、列表、連結；不支援 HTML 和圖片。登入前台後，在主題設定的公告管理中可編輯並預覽。",
+                    "en-US": "Supports headings, lists and links; HTML and images are disabled. Sign in on the frontend and open Manage announcement in Theme settings to edit and preview."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.startsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告开始时间",
+                    "zh-TW": "公告開始時間",
+                    "en-US": "Announcement start time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.endsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告结束时间",
+                    "zh-TW": "公告結束時間",
+                    "en-US": "Announcement end time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
             }
         ],
         "options": [
@@ -946,6 +1033,69 @@
                     "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
                     "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
                     "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "公告",
+                    "zh-TW": "公告",
+                    "en-US": "Announcement"
+                }
+            },
+            {
+                "key": "announcement.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "开启公告",
+                    "zh-TW": "開啟公告",
+                    "en-US": "Enable announcement"
+                },
+                "default": false
+            },
+            {
+                "key": "announcement.content",
+                "type": "text",
+                "name": {
+                    "zh-CN": "公告内容（Markdown）",
+                    "zh-TW": "公告內容（Markdown）",
+                    "en-US": "Announcement content (Markdown)"
+                },
+                "help": {
+                    "zh-CN": "支持标题、列表、链接；不支持 HTML 和图片。登录前台后，在主题设置的公告管理中可编辑并预览。",
+                    "zh-TW": "支援標題、列表、連結；不支援 HTML 和圖片。登入前台後，在主題設定的公告管理中可編輯並預覽。",
+                    "en-US": "Supports headings, lists and links; HTML and images are disabled. Sign in on the frontend and open Manage announcement in Theme settings to edit and preview."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.startsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告开始时间",
+                    "zh-TW": "公告開始時間",
+                    "en-US": "Announcement start time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.endsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告结束时间",
+                    "zh-TW": "公告結束時間",
+                    "en-US": "Announcement end time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
             }
@@ -1303,6 +1453,69 @@
                     "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
                 },
                 "default": ""
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "公告",
+                    "zh-TW": "公告",
+                    "en-US": "Announcement"
+                }
+            },
+            {
+                "key": "announcement.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "开启公告",
+                    "zh-TW": "開啟公告",
+                    "en-US": "Enable announcement"
+                },
+                "default": false
+            },
+            {
+                "key": "announcement.content",
+                "type": "text",
+                "name": {
+                    "zh-CN": "公告内容（Markdown）",
+                    "zh-TW": "公告內容（Markdown）",
+                    "en-US": "Announcement content (Markdown)"
+                },
+                "help": {
+                    "zh-CN": "支持标题、列表、链接；不支持 HTML 和图片。登录前台后，在主题设置的公告管理中可编辑并预览。",
+                    "zh-TW": "支援標題、列表、連結；不支援 HTML 和圖片。登入前台後，在主題設定的公告管理中可編輯並預覽。",
+                    "en-US": "Supports headings, lists and links; HTML and images are disabled. Sign in on the frontend and open Manage announcement in Theme settings to edit and preview."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.startsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告开始时间",
+                    "zh-TW": "公告開始時間",
+                    "en-US": "Announcement start time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.endsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告结束时间",
+                    "zh-TW": "公告結束時間",
+                    "en-US": "Announcement end time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
             }
         ],
         "data": [
@@ -1656,6 +1869,69 @@
                     "zh-CN": "填写 Uptime Kuma 中已发布状态页的 slug，例如 main。",
                     "zh-TW": "填寫 Uptime Kuma 中已發佈狀態頁的 slug，例如 main。",
                     "en-US": "Enter the slug of a published Uptime Kuma status page, such as main."
+                },
+                "default": ""
+            },
+            {
+                "type": "title",
+                "name": {
+                    "zh-CN": "公告",
+                    "zh-TW": "公告",
+                    "en-US": "Announcement"
+                }
+            },
+            {
+                "key": "announcement.enabled",
+                "type": "switch",
+                "name": {
+                    "zh-CN": "开启公告",
+                    "zh-TW": "開啟公告",
+                    "en-US": "Enable announcement"
+                },
+                "default": false
+            },
+            {
+                "key": "announcement.content",
+                "type": "text",
+                "name": {
+                    "zh-CN": "公告内容（Markdown）",
+                    "zh-TW": "公告內容（Markdown）",
+                    "en-US": "Announcement content (Markdown)"
+                },
+                "help": {
+                    "zh-CN": "支持标题、列表、链接；不支持 HTML 和图片。登录前台后，在主题设置的公告管理中可编辑并预览。",
+                    "zh-TW": "支援標題、列表、連結；不支援 HTML 和圖片。登入前台後，在主題設定的公告管理中可編輯並預覽。",
+                    "en-US": "Supports headings, lists and links; HTML and images are disabled. Sign in on the frontend and open Manage announcement in Theme settings to edit and preview."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.startsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告开始时间",
+                    "zh-TW": "公告開始時間",
+                    "en-US": "Announcement start time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
+                },
+                "default": ""
+            },
+            {
+                "key": "announcement.endsAt",
+                "type": "string",
+                "name": {
+                    "zh-CN": "公告结束时间",
+                    "zh-TW": "公告結束時間",
+                    "en-US": "Announcement end time"
+                },
+                "help": {
+                    "zh-CN": "填写带时区的时间，例如 2026-09-05T18:00:00+08:00；开始时间需早于结束时间，到期自动隐藏横幅，保留配置。无效时间不展示。",
+                    "zh-TW": "填寫含時區的時間，例如 2026-09-05T18:00:00+08:00；開始時間需早於結束時間，到期自動隱藏橫幅，保留設定。無效時間不顯示。",
+                    "en-US": "Use a timestamp with timezone, e.g. 2026-09-05T18:00:00+08:00. Start must precede end. The banner hides at expiry; configuration is retained. Invalid schedules are hidden."
                 },
                 "default": ""
             }
