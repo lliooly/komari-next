@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import { dispatchOpenRemainingValueCalculatorEvent } from "@/lib/remainingValueEvents";
 import { useEffect, useState } from "react";
 
+const NAVBAR_COMPACT_SCROLL_THRESHOLD = 16;
+
 function getSupportedLogoUrl(value: unknown): string {
   if (typeof value !== "string") {
     return "";
@@ -43,20 +45,51 @@ const NavBar = () => {
   const { t } = useTranslation();
   const logoUrl = getSupportedLogoUrl(managedThemeSettings.logoUrl);
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   useEffect(() => {
     setLogoLoadFailed(false);
   }, [logoUrl]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const nextIsCompact = window.scrollY > NAVBAR_COMPACT_SCROLL_THRESHOLD;
+
+      setIsCompact((currentIsCompact) =>
+        currentIsCompact === nextIsCompact ? currentIsCompact : nextIsCompact
+      );
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const showCustomLogo = Boolean(logoUrl) && !logoLoadFailed;
 
   return (
-    <nav className="w-full rounded-2xl border-0 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm">
-      <div className="flex h-16 items-center justify-between px-4 md:h-20">
+    <nav className="w-full rounded-2xl border-0 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 shadow-sm transition-all duration-300 motion-reduce:transition-none">
+      <div
+        className={`flex items-center justify-between transition-all duration-300 motion-reduce:transition-none ${
+          isCompact ? "h-12 px-3 md:h-14 md:px-4" : "h-16 px-4 md:h-20"
+        }`}
+      >
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
-          <SpaLink href="/" className="flex items-center gap-3 hover:opacity-80 transition-all">
-            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-primary/20">
+          <SpaLink
+            href="/"
+            className={`flex items-center hover:opacity-80 transition-all duration-300 motion-reduce:transition-none ${
+              isCompact ? "gap-2" : "gap-3"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20 transition-all duration-300 motion-reduce:transition-none ${
+                isCompact ? "h-7 w-7" : "h-8 w-8"
+              }`}
+            >
               {showCustomLogo ? (
                 <img
                   src={logoUrl}
@@ -72,14 +105,22 @@ const NavBar = () => {
                 </span>
               )}
             </div>
-            <span className="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <span
+              className={`font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent transition-all duration-300 motion-reduce:transition-none ${
+                isCompact ? "text-base md:text-xl" : "text-xl md:text-2xl"
+              }`}
+            >
               {publicInfo?.sitename}
             </span>
           </SpaLink>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center transition-all duration-300 motion-reduce:transition-none ${
+            isCompact ? "gap-1" : "gap-2"
+          }`}
+        >
           <DarkModeToggle />
           <ThemeSwitcher />
           {guestDisplay.showPrice && guestDisplay.showExpiredAt && (
